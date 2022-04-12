@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_user"
+        android:title="@string/str_navi_user"
+        android:icon="@drawable/ic_outline_supervised_user_circle_24"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_trade"
+        android:title="@string/str_navi_trade"
+        android:icon="@drawable/ic_outline_swap_horiz_24"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/menu_match"
+        android:title="@string/str_navi_match"
+        android:icon="@drawable/ic_outline_notes_24"
+        app:showAsAction="ifRoom" />
+</menu>
