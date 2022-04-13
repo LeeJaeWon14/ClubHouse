@@ -10,4 +10,9 @@ object NetworkConstants {
     const val MAX_DIVISION_URL = "https://api.nexon.co.kr/fifaonline4/v1.0/users/{accessid}/maxdivision"
     const val MATCH_TYPE_URL = "https://static.api.nexon.co.kr/fifaonline4/latest/matchtype.json"
     const val DIVISION_URL = "https://static.api.nexon.co.kr/fifaonline4/latest/division.json"
+    const val TRADE_RECORD_URL = "https://api.nexon.co.kr/fifaonline4/v1.0/users/{accessid}/markets?tradetype={tradetype}&offset={offset}&limit={limit}"
+
+    // Trade type
+    const val TRADE_BUY = "buy"
+    const val TRADE_SELL = "sell"
 }
