@@ -9,4 +9,5 @@ object NetworkConstants {
     const val PLAYER_DATA = "https://static.api.nexon.co.kr/fifaonline4/latest/spid.json"
     const val MAX_DIVISION_URL = "https://api.nexon.co.kr/fifaonline4/v1.0/users/{accessid}/maxdivision"
     const val MATCH_TYPE_URL = "https://static.api.nexon.co.kr/fifaonline4/latest/matchtype.json"
+    const val DIVISION_URL = "https://static.api.nexon.co.kr/fifaonline4/latest/division.json"
 }

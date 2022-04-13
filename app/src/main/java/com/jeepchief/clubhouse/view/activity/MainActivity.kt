@@ -5,15 +5,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.ActivityMainBinding
 import com.jeepchief.clubhouse.databinding.DialogInputNicknameBinding
 import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.database.matchtype.MatchTypeEntity
+import com.jeepchief.clubhouse.model.database.metadata.division.DivisionEntity
 import com.jeepchief.clubhouse.model.database.metadata.player.PlayerEntity
 import com.jeepchief.clubhouse.model.database.userinfo.UserInfoEntity
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
+import com.jeepchief.clubhouse.model.rest.dto.DivisionDTO
 import com.jeepchief.clubhouse.model.rest.dto.MatchTypeDTO
 import com.jeepchief.clubhouse.model.rest.dto.PlayerDTO
 import com.jeepchief.clubhouse.model.rest.dto.UserInfoDTO
@@ -66,32 +69,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val list = MyDatabase.getInstance(this@MainActivity).getPlayerDAO()
-                .selectPlayer(TEST)
-            if(list.isEmpty())
-                Log.e("not find player")
-            else
-                Log.e("player is ${list[0].name}")
-        }
         binding.apply {
             bnvBottoms.setOnItemSelectedListener { item ->
+                var nowFragment: Fragment? = null
+                supportFragmentManager.fragments.forEach { fragment ->
+                    if(fragment.isVisible) nowFragment = fragment
+                }
                 val transaction = supportFragmentManager.beginTransaction()
                 when (item.itemId) {
                     R.id.menu_user -> {
-                        transaction.replace(R.id.fl_fragment, UserInfoFragment()).commit()
+                        if(nowFragment is UserInfoFragment)
+                            return@setOnItemSelectedListener true
+                        else transaction.replace(R.id.fl_fragment, UserInfoFragment()).commit()
                     }
                     R.id.menu_trade -> {
-                        transaction.replace(R.id.fl_fragment, TradeRecordFragment()).commit()
+                        if(nowFragment is TradeRecordFragment)
+                            return@setOnItemSelectedListener true
+                        else transaction.replace(R.id.fl_fragment, TradeRecordFragment()).commit()
                     }
                     R.id.menu_match -> {
-                        transaction.replace(R.id.fl_fragment, MatchRecordFragment()).commit()
+                        if(nowFragment is MatchRecordFragment)
+                            return@setOnItemSelectedListener true
+                        else transaction.replace(R.id.fl_fragment, MatchRecordFragment()).commit()
                     }
                 }
 
                 return@setOnItemSelectedListener true
             }
-            bnvBottoms.selectedItemId = R.id.menu_user
+
+            if(Pref.getInstance(this@MainActivity)?.getBoolean(Pref.FIRST_LOGIN) == true)
+                binding.bnvBottoms.selectedItemId = R.id.menu_user
         }
     }
 
@@ -108,36 +115,49 @@ class MainActivity : AppCompatActivity() {
                     val service = RetroClient.getInstance().create(FifaService::class.java)
                     val call = service.getUserInfo(edtNickname.text.toString())
                     call.enqueue(object : Callback<UserInfoDTO> {
-                            override fun onResponse(
-                                call: Call<UserInfoDTO>,
-                                response: Response<UserInfoDTO>
-                            ) {
+                        override fun onResponse(
+                            call: Call<UserInfoDTO>,
+                            response: Response<UserInfoDTO>
+                        ) {
 
-                                response.body()?.let {
-                                    Log.e("id=${it.accessId}, nickname=${it.nickname}, level=${it.level}")
-                                    Pref.getInstance(this@MainActivity)?.setValue(Pref.FIRST_LOGIN, true)
+                            response.body()?.let {
+                                Log.e("id=${it.accessId}, nickname=${it.nickname}, level=${it.level}")
+                                Pref.getInstance(this@MainActivity)
+                                    ?.setValue(Pref.FIRST_LOGIN, true)
 
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        MyDatabase.getInstance(this@MainActivity).getUserInfoDAO().run {
-                                            val checkList = checkDistinctUserInfo(it.nickname)
-                                            if(checkList.isEmpty()) {
-                                                insertUserInfo(UserInfoEntity(it.nickname, it.accessId, it.level))
-                                            }
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    MyDatabase.getInstance(this@MainActivity).getUserInfoDAO().run {
+                                        val checkList = checkDistinctUserInfo(it.nickname)
+                                        if (checkList.isEmpty()) {
+                                            insertUserInfo(
+                                                UserInfoEntity(
+                                                    it.nickname,
+                                                    it.accessId,
+                                                    it.level
+                                                )
+                                            )
                                         }
                                     }
-                                } ?: run {
-                                    Log.e("response body is null!!")
                                 }
 
                                 runOnUiThread {
                                     Toast.makeText(this@MainActivity, "성공", Toast.LENGTH_SHORT)
                                         .show()
                                     dlg.dismiss()
+                                    binding.bnvBottoms.selectedItemId = R.id.menu_user
+                                }
+                            } ?: run {
+                                Log.e("response body is null!!")
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "닉네임을 다시 확인해주세요.", Toast.LENGTH_SHORT)
+                                        .show()
                                 }
                             }
+                        }
 
-                            override fun onFailure(call: Call<UserInfoDTO>, t: Throwable) = restFailureMessage(t)
-                        })
+                        override fun onFailure(call: Call<UserInfoDTO>, t: Throwable) =
+                            restFailureMessage(t)
+                    })
                 }
             }
             tvExit.setOnClickListener {
@@ -148,9 +168,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadMetadata() {
+        Log.e("Meta data downloading..")
         binding.pbDownloading.isVisible = true
 
         val service = RetroClient.getInstance().create(FifaService::class.java)
+
+        // Get players data from server
         CoroutineScope(Dispatchers.IO).launch {
             val call = service?.getPlayerData()
             call?.enqueue(object : Callback<List<PlayerDTO>> {
@@ -158,15 +181,17 @@ class MainActivity : AppCompatActivity() {
                     call: Call<List<PlayerDTO>>,
                     response: Response<List<PlayerDTO>>
                 ) {
-                    Log.e("Meta data downloading..")
                     CoroutineScope(Dispatchers.Default).launch {
-                        response.body()?.let {
-                            it.forEach { player ->
-                                withContext(Dispatchers.IO) {
-                                    MyDatabase.getInstance(this@MainActivity).getPlayerDAO()
-                                        .insertPlayer(PlayerEntity(player.spid, player.name))
+                        if(response.isSuccessful) {
+                            response.body()?.let {
+                                it.forEach { player ->
+                                    withContext(Dispatchers.IO) {
+                                        MyDatabase.getInstance(this@MainActivity).getPlayerDAO()
+                                            .insertPlayer(PlayerEntity(player.spid, player.name))
+                                    }
                                 }
                             }
+                            Log.e("Player data is Downloading done.")
                         }
                     }
                     Pref.getInstance(this@MainActivity)?.setValue(Pref.META_DATA_DOWNLOAD, true)
@@ -175,6 +200,8 @@ class MainActivity : AppCompatActivity() {
                 override fun onFailure(call: Call<List<PlayerDTO>>, t: Throwable) = restFailureMessage(t)
             })
         }
+
+        // Get match type from server
         CoroutineScope(Dispatchers.IO).launch {
             val call = service?.getMatchType()
             call?.enqueue(object : Callback<List<MatchTypeDTO>> {
@@ -191,12 +218,40 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
+                        Log.e("matchtype data is Downloading done.")
                     } ?: run {
                         Log.e("matchtype data is null")
                     }
                 }
 
                 override fun onFailure(call: Call<List<MatchTypeDTO>>, t: Throwable) = restFailureMessage(t)
+            })
+        }
+
+        // Get division data from server
+        CoroutineScope(Dispatchers.IO).launch {
+            val call = service?.getDivisionData()
+            call?.enqueue(object : Callback<List<DivisionDTO>> {
+                override fun onResponse(
+                    call: Call<List<DivisionDTO>>,
+                    response: Response<List<DivisionDTO>>
+                ) {
+                    if(response.isSuccessful) {
+                        response.body()?.let { list ->
+                            CoroutineScope(Dispatchers.Default).launch {
+                                list.forEach { dto ->
+                                    withContext(Dispatchers.IO) {
+                                        MyDatabase.getInstance(this@MainActivity).getDivisionDAO()
+                                            .insertDivision(DivisionEntity(dto.divisionId, dto.divisionName))
+                                    }
+                                }
+                            }
+                            Log.e("Division data is Downloading done.")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<List<DivisionDTO>>, t: Throwable) = restFailureMessage(t)
             })
         }
         binding.pbDownloading.isVisible = false

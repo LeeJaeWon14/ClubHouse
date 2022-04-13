@@ -1,9 +1,6 @@
 package com.jeepchief.clubhouse.model.rest
 
-import com.jeepchief.clubhouse.model.rest.dto.MatchTypeDTO
-import com.jeepchief.clubhouse.model.rest.dto.MaxDivisionDTO
-import com.jeepchief.clubhouse.model.rest.dto.PlayerDTO
-import com.jeepchief.clubhouse.model.rest.dto.UserInfoDTO
+import com.jeepchief.clubhouse.model.rest.dto.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -23,4 +20,7 @@ interface FifaService {
 
     @GET(NetworkConstants.MATCH_TYPE_URL)
     fun getMatchType() : Call<List<MatchTypeDTO>>
+
+    @GET(NetworkConstants.DIVISION_URL)
+    fun getDivisionData() : Call<List<DivisionDTO>>
 }

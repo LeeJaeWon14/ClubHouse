@@ -6,8 +6,8 @@ import androidx.room.Query
 
 @Dao
 interface MatchTypeDAO {
-    @Query("SELECT * FROM MatchTypeEntity WHERE 'desc' = :desc")
-    fun selectMatchType(desc: String) : List<MatchTypeEntity>
+    @Query("SELECT * FROM MatchTypeEntity WHERE matchtype = :id")
+    fun selectMatchType(id: Int) : MatchTypeEntity
     @Insert
     fun insertMatchType(entity: MatchTypeEntity)
 }

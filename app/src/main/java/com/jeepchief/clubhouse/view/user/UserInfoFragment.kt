@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.databinding.FragmentUserInfoBinding
 import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.database.userinfo.UserInfoEntity
@@ -12,6 +13,7 @@ import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.model.rest.dto.MaxDivisionDTO
 import com.jeepchief.clubhouse.util.Log
+import com.jeepchief.clubhouse.view.user.adapter.MaxDivisionAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -39,11 +41,10 @@ class UserInfoFragment : Fragment() {
         binding.apply {
 
             CoroutineScope(Dispatchers.Main).launch {
-                getUserInfo().run {
-                    tvNickname.text = nickname
-                    tvLevel.text = level.toString()
-//                    tvHighGrade.text = selectMaxDivision(uid)
-                    selectMaxDivision(uid)
+                getUserInfo().also { user ->
+                    tvNickname.text = user.nickname
+                    tvLevel.text = user.level.toString()
+                    selectMaxDivision(user.uid)
                 }
             }
 
@@ -68,6 +69,12 @@ class UserInfoFragment : Fragment() {
                         Log.e("response is success")
                         it.forEach { dto ->
                             Log.e(dto.toString())
+                        }
+                        requireActivity().runOnUiThread {
+                            binding.rvMaxDivision.apply {
+                                layoutManager = LinearLayoutManager(requireContext())
+                                adapter = MaxDivisionAdapter(it)
+                            }
                         }
 
                     } ?: run {
