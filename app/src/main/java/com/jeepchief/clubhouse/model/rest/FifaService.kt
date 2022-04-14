@@ -1,6 +1,5 @@
 package com.jeepchief.clubhouse.model.rest
 
-import com.jeepchief.clubhouse.model.database.traderecord.TradeRecordEntity
 import com.jeepchief.clubhouse.model.rest.dto.*
 import retrofit2.Call
 import retrofit2.http.GET
@@ -28,8 +27,8 @@ interface FifaService {
     @GET(NetworkConstants.TRADE_RECORD_URL)
     fun getTradeRecord(
         @Path("accessid") uid: String,
-        @Path("tradetype") tradeType: String,
-        @Path("offset") offset: Int = 0,
-        @Path("limit") limit: Int = 20
-    ) : Call<List<TradeRecordEntity>>
+        @Query("tradetype") tradeType: String,
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20
+    ) : Call<List<TradeRecordDTO>>
 }

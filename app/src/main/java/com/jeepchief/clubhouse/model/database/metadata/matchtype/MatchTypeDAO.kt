@@ -1,4 +1,4 @@
-package com.jeepchief.clubhouse.model.database.matchtype
+package com.jeepchief.clubhouse.model.database.metadata.matchtype
 
 import androidx.room.Dao
 import androidx.room.Insert

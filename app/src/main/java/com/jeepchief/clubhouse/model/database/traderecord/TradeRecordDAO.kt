@@ -6,7 +6,7 @@ import androidx.room.Query
 
 @Dao
 interface TradeRecordDAO {
-    @Query("SELECT * FROM TradeRecordEntity t WHERE t.uid = (SELECT u.uid FROM UserInfoEntity u WHERE u.nickname = :nickname)")
+    @Query("SELECT * FROM TradeRecordEntity t WHERE t.spid = (SELECT u.uid FROM UserInfoEntity u WHERE u.nickname = :nickname)")
     fun selectTradeRecord(nickname: String) : List<TradeRecordEntity>
 
     @Insert

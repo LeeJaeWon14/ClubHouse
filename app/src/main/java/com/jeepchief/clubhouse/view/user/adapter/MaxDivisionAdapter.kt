@@ -8,8 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.model.database.MyDatabase
-import com.jeepchief.clubhouse.model.database.matchtype.MatchTypeDAO
-import com.jeepchief.clubhouse.model.database.metadata.division.DivisionDAO
 import com.jeepchief.clubhouse.model.rest.dto.MaxDivisionDTO
 import com.jeepchief.clubhouse.util.Log
 import kotlinx.coroutines.*

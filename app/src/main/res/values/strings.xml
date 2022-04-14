@@ -5,4 +5,7 @@
     <string name="str_navi_user">유저 정보</string>
     <string name="str_navi_trade">거래 내역</string>
     <string name="str_navi_match">매치 기록</string>
+
+    <string name="str_trade_buy">구매</string>
+    <string name="str_trade_sell">판매</string>
 </resources>

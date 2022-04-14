@@ -11,6 +11,7 @@ class TradePagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapt
     }
 
     override fun createFragment(position: Int): Fragment {
+        fragmentList[position].arguments?.putInt("page", position+1)
         return fragmentList[position]
     }
 

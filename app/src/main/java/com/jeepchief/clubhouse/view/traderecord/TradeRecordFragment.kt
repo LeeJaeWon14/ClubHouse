@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
+import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.FragmentTradeRecordBinding
 import com.jeepchief.clubhouse.view.traderecord.adapter.TradePagerAdapter
 
@@ -35,12 +36,14 @@ class TradeRecordFragment : Fragment() {
 
     private fun initUi() {
         binding.apply {
-            vpTradePager.adapter = TradePagerAdapter(requireActivity())
+            vpTradePager.adapter = TradePagerAdapter(requireActivity()).apply {
+                addFragment(BuyFragment(), BuyFragment())
+            }
 
             TabLayoutMediator(tlTradeLayout, vpTradePager) { tab, position ->
                 tab.text = when(position) {
-                    0 -> SellFragment().javaClass.simpleName
-                    1 -> BuyFragment().javaClass.simpleName
+                    0 -> getString(R.string.str_trade_buy)
+                    1 -> getString(R.string.str_trade_sell)
                     else -> ""
                 }
             }.attach()

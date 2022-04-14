@@ -19,5 +19,5 @@ data class TradeRecordEntity(
     var grade: Int,
 
     @ColumnInfo
-    var value: Int
+    var value: Long
 )

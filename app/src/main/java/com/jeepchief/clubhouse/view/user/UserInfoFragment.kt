@@ -90,7 +90,6 @@ class UserInfoFragment : Fragment() {
     }
 
     private suspend fun getUserInfo() : UserInfoEntity {
-//        lateinit var entity: UserInfoEntity
         val deferred = CoroutineScope(Dispatchers.IO).async {
             MyDatabase.getInstance(requireContext()).getUserInfoDAO()
                 .selectUserInfo().get(0)

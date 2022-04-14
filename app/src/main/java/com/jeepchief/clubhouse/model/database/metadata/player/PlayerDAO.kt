@@ -6,8 +6,8 @@ import androidx.room.Query
 
 @Dao
 interface PlayerDAO {
-    @Query("SELECT * FROM PlayerEntity WHERE spid = :spid")
-    fun selectPlayer(spid: String) : List<PlayerEntity>
+    @Query("SELECT name FROM PlayerEntity WHERE spid = :spid")
+    fun selectPlayer(spid: String) : String
 
     @Insert
     fun insertPlayer(entity: PlayerEntity)

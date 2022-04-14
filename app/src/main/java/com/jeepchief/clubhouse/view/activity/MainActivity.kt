@@ -10,8 +10,8 @@ import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.ActivityMainBinding
 import com.jeepchief.clubhouse.databinding.DialogInputNicknameBinding
 import com.jeepchief.clubhouse.model.database.MyDatabase
-import com.jeepchief.clubhouse.model.database.matchtype.MatchTypeEntity
 import com.jeepchief.clubhouse.model.database.metadata.division.DivisionEntity
+import com.jeepchief.clubhouse.model.database.metadata.matchtype.MatchTypeEntity
 import com.jeepchief.clubhouse.model.database.metadata.player.PlayerEntity
 import com.jeepchief.clubhouse.model.database.userinfo.UserInfoEntity
 import com.jeepchief.clubhouse.model.rest.FifaService
