@@ -7,7 +7,7 @@
         android:id="@+id/tl_trade_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="auto" />
+        app:tabMode="fixed" />
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_trade_pager"
         android:layout_width="match_parent"

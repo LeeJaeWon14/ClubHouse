@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.databinding.FragmentUserInfoBinding
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.IndexOutOfBoundsException
 
 class UserInfoFragment : Fragment() {
     private var _binding : FragmentUserInfoBinding? = null
@@ -36,15 +38,18 @@ class UserInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("view created!!")
 
         binding.apply {
 
             CoroutineScope(Dispatchers.Main).launch {
-                getUserInfo().also { user ->
-                    tvNickname.text = user.nickname
-                    tvLevel.text = user.level.toString()
-                    selectMaxDivision(user.uid)
+                try {
+                    getUserInfo().also { user ->
+                        tvNickname.text = user.nickname
+                        tvLevel.text = user.level.toString()
+                        selectMaxDivision(user.uid)
+                    }
+                } catch(e: IndexOutOfBoundsException) {
+                    Toast.makeText(requireContext(), "유저정보 없음", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -66,10 +71,6 @@ class UserInfoFragment : Fragment() {
                     response: Response<List<MaxDivisionDTO>>
                 ) {
                     response.body()?.let {
-                        Log.e("response is success")
-                        it.forEach { dto ->
-                            Log.e(dto.toString())
-                        }
                         requireActivity().runOnUiThread {
                             binding.rvMaxDivision.apply {
                                 layoutManager = LinearLayoutManager(requireContext())

@@ -13,9 +13,6 @@ import com.jeepchief.clubhouse.util.Log
 import kotlinx.coroutines.*
 
 class MaxDivisionAdapter(private val list: List<MaxDivisionDTO>) : RecyclerView.Adapter<MaxDivisionAdapter.MaxDivisionViewHolder>() {
-    init {
-        Log.e("Adapter created, list > ${list.toString()} / ${list.size}")
-    }
     private lateinit var context: Context
 
     class MaxDivisionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -31,12 +28,10 @@ class MaxDivisionAdapter(private val list: List<MaxDivisionDTO>) : RecyclerView.
     }
 
     override fun onBindViewHolder(holder: MaxDivisionViewHolder, position: Int) {
-        Log.e("position is $position")
         CoroutineScope(Dispatchers.Main).launch {
             holder.apply {
                 tvMatchType.text = getMatchType(list[position].matchType).await()
                 tvDivisionGrade.text = getGrade(list[position].division)
-                Log.e(list[position].toString())
                 tvAchievementDate.text = list[position].achievementDate
             }
         }

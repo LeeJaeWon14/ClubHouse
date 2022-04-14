@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.databinding.FragmentBuyBinding
@@ -41,7 +42,7 @@ class BuyFragment : Fragment() {
             val service = RetroClient.getInstance().create(FifaService::class.java)
             service?.getTradeRecord(
                 "474b77ce34d7d22cf449d09c",
-                NetworkConstants.TRADE_BUY
+                checkTradeType(arguments?.getInt("page"))
             )?.enqueue(object : Callback<List<TradeRecordDTO>> {
                 override fun onResponse(
                     call: Call<List<TradeRecordDTO>>,
@@ -71,5 +72,13 @@ class BuyFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun checkTradeType(page: Int?) : String {
+        return when(page) {
+            0 -> NetworkConstants.TRADE_BUY
+            1 -> NetworkConstants.TRADE_SELL
+            else -> ""
+        }
     }
 }

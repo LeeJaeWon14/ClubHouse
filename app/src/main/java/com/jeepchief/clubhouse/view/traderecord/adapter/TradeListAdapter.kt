@@ -69,12 +69,18 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
                     .centerCrop()
                     .into(ivPlayer)
 
-                if(NOT_FIND_ACTION_SHOT) {
-                    Glide.with(itemView.context)
-                        .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, list[position].spid.toString().substring(3)))
-                        .centerCrop()
-                        .into(ivPlayer)
-                }
+//                if(NOT_FIND_ACTION_SHOT) {
+////                    Glide.with(itemView.context)
+////                        .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, list[position].spid.toString().substring(3)))
+////                        .centerCrop()
+////                        .into(ivPlayer)
+//
+//                    Glide.with(itemView.context)
+//                        .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, "101001075"))
+//                        .centerCrop()
+//                        .into(ivPlayer)
+//                    NOT_FIND_ACTION_SHOT = false
+//                }
 
                 tvPlayerName.text = getPlayerName(list[position].spid.toString(), itemView.context).plus("\t +${list[position].grade}")
                 tvPlayerPrice.text = makeComma(list[position].value.toString()).plus("BP")
