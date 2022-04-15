@@ -17,22 +17,28 @@
         android:orientation="vertical"
         android:gravity="center">
         <TextView
+            style="@style/TextTheme"
             android:id="@+id/tv_player_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textColor="@color/black"
             android:gravity="center"
-            android:textStyle="bold"
             tools:text = "선수 이름" />
         <TextView
+            style="@style/TextTheme"
             android:id="@+id/tv_player_price"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textColor="@color/black"
             android:gravity="center"
-            android:textStyle="bold"
             tools:text="선수 가격" />
+        <TextView
+            style="@style/TextTheme"
+            android:id="@+id/tv_trade_date"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            tools:text="거래 날짜" />
     </LinearLayout>
 </LinearLayout>

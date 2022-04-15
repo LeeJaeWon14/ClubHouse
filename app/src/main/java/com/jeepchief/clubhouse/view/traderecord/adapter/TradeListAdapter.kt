@@ -70,13 +70,8 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
                     .into(ivPlayer)
 
 //                if(NOT_FIND_ACTION_SHOT) {
-////                    Glide.with(itemView.context)
-////                        .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, list[position].spid.toString().substring(3)))
-////                        .centerCrop()
-////                        .into(ivPlayer)
-//
 //                    Glide.with(itemView.context)
-//                        .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, "101001075"))
+//                        .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, makePid(list[position].spid.toString())))
 //                        .centerCrop()
 //                        .into(ivPlayer)
 //                    NOT_FIND_ACTION_SHOT = false
@@ -112,10 +107,11 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
 
     private fun makePid(spid: String) : String {
         val uid = spid.substring(3)
-        return if(uid.get(0) != '0') {
-            uid
-        } else {
-            uid.replace("0", "")
+        var count = 0
+        for(char in uid.toCharArray()) {
+            if(char != '0') break
+            else count ++
         }
+        return uid.substring(count)
     }
 }

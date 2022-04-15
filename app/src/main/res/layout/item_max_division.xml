@@ -3,29 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="50dp">
     <TextView
+        style="@style/TextTheme"
         android:id="@+id/tv_division_type"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/black"
         tools:text="Division Type"
         android:textAlignment="center"/>
     <TextView
+        style="@style/TextTheme"
         android:id="@+id/tv_division_grade"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/black"
         tools:text="Division Grade"
         android:textAlignment="center"/>
     <TextView
+        style="@style/TextTheme"
         android:id="@+id/tv_division_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/black"
         tools:text="Division Date"
         android:textAlignment="center"/>
 </LinearLayout>

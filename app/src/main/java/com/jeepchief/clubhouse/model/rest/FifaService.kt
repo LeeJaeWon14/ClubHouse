@@ -12,6 +12,11 @@ interface FifaService {
         @Query("nickname") nickname: String
     ): Call<UserInfoDTO>
 
+    @GET("users")
+    fun getUserInfoWithId(
+        @Path("accessid") accessId: String
+    ): Call<UserInfoDTO>
+
     @GET(NetworkConstants.PLAYER_DATA)
     fun getPlayerData() : Call<List<PlayerDTO>>
 
@@ -31,4 +36,7 @@ interface FifaService {
         @Query("offset") offset: Int = 0,
         @Query("limit") limit: Int = 20
     ) : Call<List<TradeRecordDTO>>
+
+    @GET(NetworkConstants.MATCH_DETAIL_URL)
+    fun getMatchRecord(@Path("matchid") matchId: String) : Call<MatchBean>
 }

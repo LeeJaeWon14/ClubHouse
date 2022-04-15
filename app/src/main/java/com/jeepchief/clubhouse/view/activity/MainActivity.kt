@@ -141,8 +141,6 @@ class MainActivity : AppCompatActivity() {
                                 }
 
                                 runOnUiThread {
-                                    Toast.makeText(this@MainActivity, "성공", Toast.LENGTH_SHORT)
-                                        .show()
                                     dlg.dismiss()
                                     binding.bnvBottoms.selectedItemId = R.id.menu_user
                                 }

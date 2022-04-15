@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.jeepchief.clubhouse.databinding.FragmentMatchRecordBinding
-import com.jeepchief.clubhouse.util.Log
 
 class MatchRecordFragment : Fragment() {
     private var _binding: FragmentMatchRecordBinding? = null
@@ -22,6 +21,11 @@ class MatchRecordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.rvMatchRecord.apply {
+            layoutManager = null
+            adapter = null
+        }
     }
 
     override fun onDestroy() {
