@@ -27,8 +27,17 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_max_division"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/tv_nickname"/>
+
+    <Button
+        android:id="@+id/btn_grade_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_below="@+id/rv_max_division"
+        android:text="@string/str_match_grade_guide" />
 
 </RelativeLayout>

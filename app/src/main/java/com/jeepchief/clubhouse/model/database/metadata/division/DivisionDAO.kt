@@ -9,6 +9,9 @@ interface DivisionDAO {
     @Query("SELECT * FROM DivisionEntity WHERE divisionId = :divisionId")
     fun selectDivisionName(divisionId: Int) : DivisionEntity
 
+    @Query("SELECT * FROM DivisionEntity")
+    fun selectAllDivisionName() : List<DivisionEntity>
+
     @Insert
     fun insertDivision(entity: DivisionEntity)
 

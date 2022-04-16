@@ -1,5 +1,6 @@
 package com.jeepchief.clubhouse.view.user
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,17 +9,17 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.databinding.FragmentUserInfoBinding
+import com.jeepchief.clubhouse.databinding.LayoutGradeGuideBinding
 import com.jeepchief.clubhouse.model.database.MyDatabase
+import com.jeepchief.clubhouse.model.database.metadata.division.DivisionEntity
 import com.jeepchief.clubhouse.model.database.userinfo.UserInfoEntity
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.model.rest.dto.MaxDivisionDTO
 import com.jeepchief.clubhouse.util.Log
+import com.jeepchief.clubhouse.view.user.adapter.GradeGuideAdapter
 import com.jeepchief.clubhouse.view.user.adapter.MaxDivisionAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,6 +39,10 @@ class UserInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        divisionList = CoroutineScope(Dispatchers.IO).async {
+            MyDatabase.getInstance(requireContext()).getDivisionDAO()
+                .selectAllDivisionName()
+        }
 
         binding.apply {
 
@@ -53,8 +58,24 @@ class UserInfoFragment : Fragment() {
                 }
             }
 
+            btnGradeGuide.setOnClickListener {
+               CoroutineScope(Dispatchers.Main).launch {
+                   val dlgBinding = LayoutGradeGuideBinding.inflate(layoutInflater)
+                   val dlg = AlertDialog.Builder(requireContext()).create()
+                   dlg.setView(dlgBinding.root)
+
+                   dlgBinding.rvGradeGuide.apply {
+                       layoutManager = LinearLayoutManager(requireContext())
+                       adapter = GradeGuideAdapter(divisionList.await())
+                   }
+                   dlg.setCancelable(false)
+                   dlg.show()
+               }
+            }
         }
     }
+
+    private lateinit var divisionList: Deferred<List<DivisionEntity>>
 
     override fun onDestroy() {
         super.onDestroy()
