@@ -39,4 +39,12 @@ interface FifaService {
 
     @GET(NetworkConstants.MATCH_DETAIL_URL)
     fun getMatchRecord(@Path("matchid") matchId: String) : Call<MatchBean>
+
+    @GET(NetworkConstants.MATCH_RECORD_ID_URL)
+    fun getMatchId(
+        @Path("accessid") uid: String,
+        @Query("matchtype") matchType: Int,
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20
+    ) : Call<List<String>>
 }

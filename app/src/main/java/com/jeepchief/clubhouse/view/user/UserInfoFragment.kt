@@ -64,9 +64,14 @@ class UserInfoFragment : Fragment() {
                    val dlg = AlertDialog.Builder(requireContext()).create()
                    dlg.setView(dlgBinding.root)
 
-                   dlgBinding.rvGradeGuide.apply {
-                       layoutManager = LinearLayoutManager(requireContext())
-                       adapter = GradeGuideAdapter(divisionList.await())
+                   dlgBinding.apply {
+                       rvGradeGuide.apply {
+                           layoutManager = LinearLayoutManager(requireContext())
+                           adapter = GradeGuideAdapter(divisionList.await())
+                       }
+                       btnCloseGuide.setOnClickListener {
+                           dlg.dismiss()
+                       }
                    }
                    dlg.setCancelable(false)
                    dlg.show()
