@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.MainActivity">
+    tools:context=".view.activity.MainActivity"
+    android:background="@color/primary_black">
 
     <FrameLayout
         android:id="@+id/fl_fragment"
@@ -18,7 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu = "@menu/menu_bottom_navi"
-        app:backgroundTint="@color/white"/>
+        app:backgroundTint="@color/primary_black"
+        app:itemRippleColor="@color/white"/>
 
     <ProgressBar
         android:id="@+id/pb_downloading"

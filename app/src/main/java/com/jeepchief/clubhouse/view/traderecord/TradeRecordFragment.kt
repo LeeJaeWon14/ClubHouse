@@ -1,9 +1,11 @@
 package com.jeepchief.clubhouse.view.traderecord
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.jeepchief.clubhouse.R
@@ -47,6 +49,7 @@ class TradeRecordFragment : Fragment() {
                     else -> ""
                 }
             }.attach()
+            tlTradeLayout.setSelectedTabIndicatorColor(requireContext().getColor(R.color.primary_green))
         }
     }
 }

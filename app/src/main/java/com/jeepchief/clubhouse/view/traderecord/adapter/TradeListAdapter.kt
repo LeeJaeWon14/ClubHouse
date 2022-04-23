@@ -29,6 +29,7 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
         val ivPlayer: ImageView = view.findViewById(R.id.iv_player)
         val tvPlayerName: TextView = view.findViewById(R.id.tv_player_name)
         val tvPlayerPrice: TextView = view.findViewById(R.id.tv_player_price)
+        val tvTradeDate: TextView = view.findViewById(R.id.tv_trade_date)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TradeListViewHolder {
@@ -79,6 +80,7 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
 
                 tvPlayerName.text = getPlayerName(list[position].spid.toString(), itemView.context).plus("\t +${list[position].grade}")
                 tvPlayerPrice.text = makeComma(list[position].value.toString()).plus("BP")
+                tvTradeDate.text = list[position].tradeDate.replace("T", " / ")
             }
 
         }

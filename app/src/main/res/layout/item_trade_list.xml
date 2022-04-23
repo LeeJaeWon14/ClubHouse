@@ -23,7 +23,8 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            tools:text = "선수 이름" />
+            tools:text = "선수 이름"
+            android:textSize="12dp"/>
         <TextView
             style="@style/TextTheme"
             android:id="@+id/tv_player_price"
@@ -31,7 +32,8 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            tools:text="선수 가격" />
+            tools:text="선수 가격"
+            android:textSize="12dp"/>
         <TextView
             style="@style/TextTheme"
             android:id="@+id/tv_trade_date"
@@ -39,6 +41,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            tools:text="거래 날짜" />
+            tools:text="거래 날짜"
+            android:textSize="12dp"/>
     </LinearLayout>
 </LinearLayout>

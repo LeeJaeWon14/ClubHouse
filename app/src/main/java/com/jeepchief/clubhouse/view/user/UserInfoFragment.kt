@@ -49,8 +49,8 @@ class UserInfoFragment : Fragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 try {
                     getUserInfo().also { user ->
-                        tvNickname.text = user.nickname
-                        tvLevel.text = user.level.toString()
+                        tvNickname.text = StringBuilder("Name : ").append(user.nickname).toString()
+                        tvLevel.text = StringBuilder("Lv. ").append(user.level.toString()).toString()
                         selectMaxDivision(user.uid)
                     }
                 } catch(e: IndexOutOfBoundsException) {

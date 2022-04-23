@@ -10,4 +10,7 @@
     <string name="str_trade_sell">판매</string>
     <string name="str_match_grade_guide">등급 안내</string>
     <string name="str_guide_close">닫기</string>
+
+    <string name="str_dialog_ok">확인</string>
+    <string name="str_dialog_cancel">종료</string>
 </resources>
