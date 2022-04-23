@@ -13,4 +13,6 @@
 
     <string name="str_dialog_ok">확인</string>
     <string name="str_dialog_cancel">종료</string>
+
+    <string name="str_not_implemented_yet">아직 구현중입니다.</string>
 </resources>

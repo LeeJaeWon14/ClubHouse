@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.FragmentMatchRecordBinding
 import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.util.Log
+import com.jeepchief.clubhouse.view.matchrecord.adapter.MatchRecordAdapter
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,10 +37,7 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         CoroutineScope(Dispatchers.Main).launch {
             binding.apply {
-                rvMatchRecord.apply {
-                    layoutManager = null
-                    adapter = null
-                }
+
                 spMatchType.apply {
                     val spAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, getMatchTypes().await())
                     adapter = spAdapter
@@ -56,13 +55,13 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-            val matchId = MyDatabase.getInstance(requireContext()).getMatchTypeDAO()
+            val matchTypeId = MyDatabase.getInstance(requireContext()).getMatchTypeDAO()
                 .selectMatchTypeId(binding.spMatchType.selectedItem?.toString()!!)
 
             val service = RetroClient.getInstance().create(FifaService::class.java)
             val call = service?.getMatchId(
                 "474b77ce34d7d22cf449d09c",
-                matchId
+                matchTypeId
             )
             call?.enqueue(object : Callback<List<String>> {
                 override fun onResponse(
@@ -71,8 +70,12 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 ) {
                     if(response.isSuccessful) {
                         response.body()?.let {
-                            it.forEach { id ->
-                                Log.e("matchId is ${id}")
+//                            it.forEach { id ->
+//                                Log.e("matchId is ${id}")
+//                            }
+                            binding.rvMatchRecord.apply {
+                                layoutManager = LinearLayoutManager(requireContext())
+                                adapter = MatchRecordAdapter(it)
                             }
                         } ?: run {
                             Log.e("matchId response is null")

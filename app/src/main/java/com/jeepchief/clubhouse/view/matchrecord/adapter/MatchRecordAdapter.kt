@@ -3,13 +3,33 @@ package com.jeepchief.clubhouse.view.matchrecord.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.jeepchief.clubhouse.R
+import com.jeepchief.clubhouse.model.rest.FifaService
+import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.model.rest.dto.MatchBean
+import com.jeepchief.clubhouse.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapter<MatchRecordAdapter.MatchRecordViewHolder>() {
+class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<MatchRecordAdapter.MatchRecordViewHolder>() {
     class MatchRecordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
+        val tvFirstName: TextView = view.findViewById(R.id.tv_first_name)
+        val tvFirstLevel: TextView = view.findViewById(R.id.tv_first_level)
+        val tvFirstScore: TextView = view.findViewById(R.id.tv_first_score)
+        val tvSecondName: TextView = view.findViewById(R.id.tv_second_name)
+        val tvSecondLevel: TextView = view. findViewById(R.id.tv_second_level)
+        val tvSecondScore: TextView = view.findViewById(R.id.tv_second_score)
+        val tvPlayDate: TextView = view.findViewById(R.id.tv_play_date)
+        val llMatchRecord: LinearLayout = view.findViewById(R.id.ll_match_record)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchRecordViewHolder {
@@ -18,7 +38,47 @@ class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(holder: MatchRecordViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        holder.apply {
+            CoroutineScope(Dispatchers.IO).launch {
+                val service = RetroClient.getInstance().create(FifaService::class.java)
+                service.getMatchRecord(list[position]).enqueue(object : Callback<MatchBean> {
+                    override fun onResponse(
+                        call: Call<MatchBean>,
+                        response: Response<MatchBean>
+                    ) {
+                        if(response.isSuccessful) {
+                            response.body()?.let {
+//                                        it.matchInfoBean[0].shoot.goalTotal // 골 수
+//                                        it.matchInfoBean[0].matchDetail.matchResult // 승패 여부
+//                                        it.matchInfoBean[0].nickname
+                                tvPlayDate.text = it.matchDate.replace("T", " / ")
+                                it.matchInfoBean[0].apply {
+                                    tvFirstName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
+                                    tvFirstLevel.text = "Lv. TEST"
+                                    tvFirstScore.text = shoot.goalTotal.toString()
+                                }
+                                it.matchInfoBean[1].apply {
+                                    tvSecondName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
+                                    tvSecondLevel.text = "Lv. TEST"
+                                    tvSecondScore.text = shoot.goalTotal.toString()
+                                }
+                            } ?: run {
+                                Log.e("response body is null!!")
+                            }
+                        } else {
+                            Log.e("response is fail")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<MatchBean>, t: Throwable) {
+                        Log.e("match record is fail, message is ${t.message}")
+                    }
+                })
+            }
+            llMatchRecord.setOnClickListener {
+                Toast.makeText(itemView.context, itemView.context.getString(R.string.str_not_implemented_yet), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun getItemCount(): Int {

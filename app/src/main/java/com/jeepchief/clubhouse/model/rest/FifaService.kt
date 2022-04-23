@@ -45,6 +45,6 @@ interface FifaService {
         @Path("accessid") uid: String,
         @Query("matchtype") matchType: Int,
         @Query("offset") offset: Int = 0,
-        @Query("limit") limit: Int = 20
+        @Query("limit") limit: Int = 10
     ) : Call<List<String>>
 }

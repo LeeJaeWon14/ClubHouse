@@ -1,8 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:background="@color/primary_black"
+    android:layout_marginBottom="10dp"
+    android:clickable="true"
+    android:background="@drawable/ripple_unbound"
+    android:id="@+id/ll_match_record">
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+        <LinearLayout
+            android:id="@+id/ll_first_gamer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true">
+            <TextView
+                android:id="@+id/tv_first_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextTheme"
+                tools:text = "Nickname (승)" />
+            <TextView
+                android:id="@+id/tv_first_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextTheme"
+                tools:text = "Level"
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_first_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextTheme"
+            tools:text = "score"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+        <TextView
+            android:id="@+id/tv_play_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_first_gamer"
+            tools:text="Game play date"
+            style="@style/TextTheme"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layoutDirection="rtl"
+        android:layout_marginEnd="5dp">
+        <LinearLayout
+            android:id="@+id/ll_second_gamer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true">
+            <TextView
+                android:id="@+id/tv_second_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextTheme"
+                tools:text = "Nickname (패)" />
+            <TextView
+                android:id="@+id/tv_second_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextTheme"
+                tools:text = "Level"
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_second_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextTheme"
+            tools:text = "score"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@+id/ll_second_gamer" />
+    </RelativeLayout>
 </LinearLayout>
