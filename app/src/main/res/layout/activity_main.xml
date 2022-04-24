@@ -20,7 +20,9 @@
         android:layout_alignParentBottom="true"
         app:menu = "@menu/menu_bottom_navi"
         app:backgroundTint="@color/primary_black"
-        app:itemRippleColor="@color/white"/>
+        app:itemIconTint="@color/menu_selector_color"
+        app:itemTextColor="@color/menu_selector_color"
+        app:itemBackground="@drawable/ripple_unbound" />
 
     <ProgressBar
         android:id="@+id/pb_downloading"

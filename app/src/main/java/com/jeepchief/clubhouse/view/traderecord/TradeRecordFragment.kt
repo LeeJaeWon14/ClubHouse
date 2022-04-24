@@ -49,7 +49,10 @@ class TradeRecordFragment : Fragment() {
                     else -> ""
                 }
             }.attach()
-            tlTradeLayout.setSelectedTabIndicatorColor(requireContext().getColor(R.color.primary_green))
+            tlTradeLayout.apply {
+                setSelectedTabIndicatorColor(requireContext().getColor(R.color.primary_green))
+                setTabRippleColorResource(R.color.primary_green)
+            }
         }
     }
 }

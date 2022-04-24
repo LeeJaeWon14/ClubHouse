@@ -11,6 +11,7 @@ import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.model.rest.dto.MatchBean
+import com.jeepchief.clubhouse.model.rest.dto.UserInfoDTO
 import com.jeepchief.clubhouse.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,8 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<MatchRecordAdapter.MatchRecordViewHolder>() {
+    private var userDTO : UserInfoDTO? = null
+
     class MatchRecordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvFirstName: TextView = view.findViewById(R.id.tv_first_name)
         val tvFirstLevel: TextView = view.findViewById(R.id.tv_first_level)
@@ -48,18 +51,15 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
                     ) {
                         if(response.isSuccessful) {
                             response.body()?.let {
-//                                        it.matchInfoBean[0].shoot.goalTotal // 골 수
-//                                        it.matchInfoBean[0].matchDetail.matchResult // 승패 여부
-//                                        it.matchInfoBean[0].nickname
                                 tvPlayDate.text = it.matchDate.replace("T", " / ")
                                 it.matchInfoBean[0].apply {
                                     tvFirstName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
-                                    tvFirstLevel.text = "Lv. TEST"
+                                    tvFirstLevel.text = getUserInfo(nickname).level.toString()
                                     tvFirstScore.text = shoot.goalTotal.toString()
                                 }
                                 it.matchInfoBean[1].apply {
                                     tvSecondName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
-                                    tvSecondLevel.text = "Lv. TEST"
+                                    tvSecondLevel.text = getUserInfo(nickname).level.toString()
                                     tvSecondScore.text = shoot.goalTotal.toString()
                                 }
                             } ?: run {
@@ -83,5 +83,29 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
 
     override fun getItemCount(): Int {
         return list.size
+    }
+
+    private fun getUserInfo(nickname: String) : UserInfoDTO {
+        Log.e("nickname is $nickname")
+        var dto: UserInfoDTO? = null
+        CoroutineScope(Dispatchers.IO).launch {
+            val service = RetroClient.getInstance().create(FifaService::class.java).getUserInfo(nickname)
+            service.enqueue(object : Callback<UserInfoDTO> {
+                override fun onResponse(call: Call<UserInfoDTO>, response: Response<UserInfoDTO>) {
+                    if(response.isSuccessful) {
+                        response.body()?.let { dto = it.copy() }
+                        Log.e("dto is ${dto.toString()}")
+                    }
+                    else {
+                        Log.e("response fail")
+                    }
+                }
+
+                override fun onFailure(call: Call<UserInfoDTO>, t: Throwable) {
+                    Log.e("rest fail")
+                }
+            })
+        }
+        return dto!!
     }
 }
