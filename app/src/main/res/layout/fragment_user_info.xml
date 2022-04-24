@@ -56,13 +56,18 @@
 
     <Button
         android:id="@+id/btn_grade_guide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_border"
-        android:textStyle="bold"
-        android:textColor="@color/white"
+        style="@style/ButtonTheme"
         android:layout_below="@+id/rv_max_division"
         android:layout_marginTop="20dp"
         android:text="@string/str_match_grade_guide" />
+
+    <Button
+        android:id="@+id/btn_logout"
+        style="@style/ButtonTheme"
+        android:layout_toEndOf="@+id/btn_grade_guide"
+        android:layout_below="@+id/rv_max_division"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/str_logout"/>
 
 </RelativeLayout>

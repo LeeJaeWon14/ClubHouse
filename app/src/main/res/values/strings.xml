@@ -10,9 +10,12 @@
     <string name="str_trade_sell">판매</string>
     <string name="str_match_grade_guide">등급 안내</string>
     <string name="str_guide_close">닫기</string>
+    <string name="str_logout">로그아웃</string>
+    <string name="str_login">닉네임을 입력하세요</string>
 
     <string name="str_dialog_ok">확인</string>
-    <string name="str_dialog_cancel">종료</string>
+    <string name="str_dialog_cancel">취소</string>
+    <string name="str_confirmed_logout">로그아웃 하시겠습니까?</string>
 
     <string name="str_not_implemented_yet">아직 구현중입니다.</string>
 </resources>

@@ -9,8 +9,34 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="light_gray">#B5B5B5</color>
+    <color name="white_50">#80FFFFFF</color>
 
     <!-- Primary Colors -->
     <color name="primary_black">#1e2127</color>
     <color name="primary_green">#a3e90c</color>
+
+    <!-- 투명도 -->
+    <!--
+    	100% FF
+        95%  F2
+        90%  E6
+        85%  D9
+        80%  CC
+        75%  BF
+        70%  B3
+        65%  A6
+        60%  99
+        55%  8C
+        50%  80
+        45%  73
+        40%  66
+        35%  59
+        30%  4D
+        25%  40
+        20%  33
+        15%  26
+        10%  1A
+        5%   0D
+        0%   00
+        -->
 </resources>

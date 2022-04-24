@@ -1,13 +1,16 @@
 package com.jeepchief.clubhouse.view.user
 
-import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.FragmentUserInfoBinding
 import com.jeepchief.clubhouse.databinding.LayoutGradeGuideBinding
 import com.jeepchief.clubhouse.model.database.MyDatabase
@@ -17,6 +20,8 @@ import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.model.rest.dto.MaxDivisionDTO
 import com.jeepchief.clubhouse.util.Log
+import com.jeepchief.clubhouse.util.Pref
+import com.jeepchief.clubhouse.view.activity.MainActivity
 import com.jeepchief.clubhouse.view.user.adapter.GradeGuideAdapter
 import com.jeepchief.clubhouse.view.user.adapter.MaxDivisionAdapter
 import kotlinx.coroutines.*
@@ -76,6 +81,19 @@ class UserInfoFragment : Fragment() {
                    dlg.setCancelable(false)
                    dlg.show()
                }
+            }
+
+            btnLogout.setOnClickListener {
+                AlertDialog.Builder(requireContext())
+                    .setMessage(getString(R.string.str_confirmed_logout))
+                    .setPositiveButton(R.string.str_dialog_ok) { dialogInterface: DialogInterface, i: Int ->
+                        Pref.getInstance(requireContext())?.removeValue(Pref.USER_NAME)
+                        requireActivity().finishAffinity()
+                        startActivity(Intent(requireContext(), MainActivity::class.java))
+                    }
+                    .setNegativeButton(R.string.str_dialog_cancel, null)
+                    .setCancelable(false)
+                    .show()
             }
         }
     }

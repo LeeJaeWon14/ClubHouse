@@ -50,8 +50,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkPref() {
         Pref.getInstance(this)?.let {
-            if(!it.getBoolean(Pref.FIRST_LOGIN))
-                showInputDialog()
+            if(it.getString(Pref.USER_NAME) == "")
+                showLoginDialog()
             if(!it.getBoolean(Pref.META_DATA_DOWNLOAD))
                 downloadMetadata()
         }
@@ -97,12 +97,12 @@ class MainActivity : AppCompatActivity() {
                 return@setOnItemSelectedListener true
             }
 
-            if(Pref.getInstance(this@MainActivity)?.getBoolean(Pref.FIRST_LOGIN) == true)
+            if(Pref.getInstance(this@MainActivity)?.getString(Pref.USER_NAME) != "")
                 binding.bnvBottoms.selectedItemId = R.id.menu_user
         }
     }
 
-    private fun showInputDialog() {
+    private fun showLoginDialog() {
         val dlgBinding = DialogInputNicknameBinding.inflate(layoutInflater)
         val dlg = AlertDialog.Builder(this).create().apply {
             setView(dlgBinding.root)
@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                             response.body()?.let {
                                 Log.e("id=${it.accessId}, nickname=${it.nickname}, level=${it.level}")
                                 Pref.getInstance(this@MainActivity)
-                                    ?.setValue(Pref.FIRST_LOGIN, true)
+                                    ?.setValue(Pref.USER_NAME, it.nickname)
 
                                 CoroutineScope(Dispatchers.IO).launch {
                                     MyDatabase.getInstance(this@MainActivity).getUserInfoDAO().run {
