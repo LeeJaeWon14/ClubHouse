@@ -1,28 +1,32 @@
 package com.jeepchief.clubhouse.view.matchrecord.adapter
 
+import android.app.Activity
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jeepchief.clubhouse.R
+import com.jeepchief.clubhouse.databinding.DialogMatchDetailBinding
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.model.rest.dto.MatchBean
+import com.jeepchief.clubhouse.model.rest.dto.ShootDetailBean
 import com.jeepchief.clubhouse.model.rest.dto.UserInfoDTO
 import com.jeepchief.clubhouse.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<MatchRecordAdapter.MatchRecordViewHolder>() {
     private var userDTO : UserInfoDTO? = null
+    private val firstBeanMap = hashMapOf<Int, List<ShootDetailBean>>()
+    private val secondBeanMap = hashMapOf<Int, List<ShootDetailBean>>()
 
     class MatchRecordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvFirstName: TextView = view.findViewById(R.id.tv_first_name)
@@ -52,15 +56,17 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
                         if(response.isSuccessful) {
                             response.body()?.let {
                                 tvPlayDate.text = it.matchDate.replace("T", " / ")
-                                it.matchInfoBean[0].apply {
+                                firstBeanMap.put(position, getGoalInfo(it.matchInfoBean[0].shootDetailBean))
+                                secondBeanMap.put(position, getGoalInfo(it.matchInfoBean[1].shootDetailBean))
+                                it.matchInfoBean[0].run {
                                     tvFirstName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
-                                    tvFirstLevel.text = getUserInfo(nickname).level.toString()
                                     tvFirstScore.text = shoot.goalTotal.toString()
+                                    getUserInfo(nickname, tvFirstLevel, itemView.context)
                                 }
-                                it.matchInfoBean[1].apply {
+                                it.matchInfoBean[1].run {
                                     tvSecondName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
-                                    tvSecondLevel.text = getUserInfo(nickname).level.toString()
                                     tvSecondScore.text = shoot.goalTotal.toString()
+                                    getUserInfo(nickname, tvSecondLevel, itemView.context)
                                 }
                             } ?: run {
                                 Log.e("response body is null!!")
@@ -76,7 +82,26 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
                 })
             }
             llMatchRecord.setOnClickListener {
-                Toast.makeText(itemView.context, itemView.context.getString(R.string.str_not_implemented_yet), Toast.LENGTH_SHORT).show()
+//                Toast.makeText(itemView.context, itemView.context.getString(R.string.str_not_implemented_yet), Toast.LENGTH_SHORT).show()
+
+                val dlg = AlertDialog.Builder(itemView.context).create()
+                val dlgBinding = DialogMatchDetailBinding.inflate((itemView.context as Activity).layoutInflater)
+                dlg.setView(dlgBinding.root)
+
+                dlgBinding.apply {
+                    rvFirstMatchDetail.apply {
+                        layoutManager = LinearLayoutManager(itemView.context)
+                        firstBeanMap[position]?.let { adapter = MatchDetailAdapter(it) }
+                    }
+
+                    rvSecondMatchDetail.apply {
+                        layoutManager = LinearLayoutManager(itemView.context)
+                        secondBeanMap[position]?.let { adapter = MatchDetailAdapter(it) }
+                    }
+                }
+
+//                dlg.setCancelable(false)
+                dlg.show()
             }
         }
     }
@@ -85,16 +110,17 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
         return list.size
     }
 
-    private fun getUserInfo(nickname: String) : UserInfoDTO {
-        Log.e("nickname is $nickname")
-        var dto: UserInfoDTO? = null
+    private fun getUserInfo(nickname: String, textView: TextView, context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val service = RetroClient.getInstance().create(FifaService::class.java).getUserInfo(nickname)
             service.enqueue(object : Callback<UserInfoDTO> {
                 override fun onResponse(call: Call<UserInfoDTO>, response: Response<UserInfoDTO>) {
                     if(response.isSuccessful) {
-                        response.body()?.let { dto = it.copy() }
-                        Log.e("dto is ${dto.toString()}")
+                        response.body()?.let {
+                            (context as Activity).runOnUiThread {
+                                textView.text = it.level.toString()
+                            }
+                        }
                     }
                     else {
                         Log.e("response fail")
@@ -106,6 +132,15 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
                 }
             })
         }
-        return dto!!
+    }
+
+    private fun getGoalInfo(shootDetailBean: List<ShootDetailBean>) : List<ShootDetailBean> {
+        val goalInfoList: MutableList<ShootDetailBean> = mutableListOf()
+        shootDetailBean.forEach { bean ->
+            if(bean.result == 3)
+                goalInfoList.add(bean)
+        }
+
+        return goalInfoList
     }
 }

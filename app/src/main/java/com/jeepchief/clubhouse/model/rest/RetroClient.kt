@@ -13,7 +13,7 @@ object RetroClient {
             override fun intercept(chain: Interceptor.Chain): Response {
                 val request = chain.request().newBuilder().addHeader(
                     "Authorization",
-                    NetworkConstants.API_KET
+                    NetworkConstants.API_KEY
                 ).build()
                 return chain.proceed(request)
             }

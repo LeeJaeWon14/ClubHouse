@@ -12,7 +12,7 @@ interface FifaService {
         @Query("nickname") nickname: String
     ): Call<UserInfoDTO>
 
-    @GET("users")
+    @GET("users/{accessid}")
     fun getUserInfoWithId(
         @Path("accessid") accessId: String
     ): Call<UserInfoDTO>

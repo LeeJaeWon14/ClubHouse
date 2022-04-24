@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:background="@color/primary_black"
+    android:paddingBottom="10dp">
+    <TextView
+        android:id="@+id/tv_goal_time"
+        style="@style/TextTheme"
+        tools:text="Goal time" />
+
+    <TextView
+        android:id="@+id/tv_goal_player"
+        style="@style/TextTheme"
+        tools:text="Player name" />
+
+    <TextView
+        android:id="@+id/tv_assist_player"
+        style="@style/TextTheme"
+        tools:text="Assist player" />
+
+</LinearLayout>

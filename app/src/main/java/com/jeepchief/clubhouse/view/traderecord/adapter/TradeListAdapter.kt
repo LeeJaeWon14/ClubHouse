@@ -27,7 +27,7 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
     private var NOT_FIND_ACTION_SHOT = false
     class TradeListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivPlayer: ImageView = view.findViewById(R.id.iv_player)
-        val tvPlayerName: TextView = view.findViewById(R.id.tv_player_name)
+        val tvPlayerName: TextView = view.findViewById(R.id.tv_goal_player)
         val tvPlayerPrice: TextView = view.findViewById(R.id.tv_player_price)
         val tvTradeDate: TextView = view.findViewById(R.id.tv_trade_date)
     }

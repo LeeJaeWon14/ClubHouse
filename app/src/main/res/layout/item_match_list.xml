@@ -7,7 +7,7 @@
     tools:background="@color/primary_black"
     android:layout_marginBottom="10dp"
     android:clickable="true"
-    android:background="@drawable/ripple_unbound"
+    android:background="@drawable/ripple_bound"
     android:id="@+id/ll_match_record">
     <RelativeLayout
         android:layout_width="0dp"
