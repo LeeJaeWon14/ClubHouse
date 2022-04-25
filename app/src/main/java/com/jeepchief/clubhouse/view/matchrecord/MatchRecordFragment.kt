@@ -60,7 +60,7 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             val service = RetroClient.getInstance().create(FifaService::class.java)
             val call = service?.getMatchId(
-                "474b77ce34d7d22cf449d09c",
+                getUserId(),
                 matchTypeId
             )
             call?.enqueue(object : Callback<List<String>> {
@@ -99,5 +99,13 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
             MyDatabase.getInstance(requireContext()).getMatchTypeDAO()
                 .selectAllMatchType()
         }
+    }
+
+    private suspend fun getUserId() : String {
+        val deferred = CoroutineScope(Dispatchers.IO).async {
+            MyDatabase.getInstance(requireContext()).getUserInfoDAO()
+                .selectUserInfo().get(0).uid
+        }
+        return deferred.await()
     }
 }

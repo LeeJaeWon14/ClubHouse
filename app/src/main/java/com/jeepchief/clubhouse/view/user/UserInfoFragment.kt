@@ -87,9 +87,17 @@ class UserInfoFragment : Fragment() {
                 AlertDialog.Builder(requireContext())
                     .setMessage(getString(R.string.str_confirmed_logout))
                     .setPositiveButton(R.string.str_dialog_ok) { dialogInterface: DialogInterface, i: Int ->
-                        Pref.getInstance(requireContext())?.removeValue(Pref.USER_NAME)
-                        requireActivity().finishAffinity()
-                        startActivity(Intent(requireContext(), MainActivity::class.java))
+                        CoroutineScope(Dispatchers.IO).launch {
+                            MyDatabase.getInstance(requireContext()).getUserInfoDAO().run {
+                                val userEntity = selectUserInfo().get(0)
+                                deleteUserInfo(userEntity)
+                            }
+                            Pref.getInstance(requireContext())?.removeValue(Pref.USER_NAME)
+                            withContext(Dispatchers.Main) {
+                                requireActivity().finishAffinity()
+                                startActivity(Intent(requireContext(), MainActivity::class.java))
+                            }
+                        }
                     }
                     .setNegativeButton(R.string.str_dialog_cancel, null)
                     .setCancelable(false)

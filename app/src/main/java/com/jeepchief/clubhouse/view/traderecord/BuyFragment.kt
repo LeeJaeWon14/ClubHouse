@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.databinding.FragmentBuyBinding
+import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.NetworkConstants
 import com.jeepchief.clubhouse.model.rest.RetroClient
@@ -16,6 +17,7 @@ import com.jeepchief.clubhouse.util.Log
 import com.jeepchief.clubhouse.view.traderecord.adapter.TradeListAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,7 +43,7 @@ class BuyFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val service = RetroClient.getInstance().create(FifaService::class.java)
             service?.getTradeRecord(
-                "474b77ce34d7d22cf449d09c",
+                getUserId(),
                 checkTradeType(arguments?.getInt("page"))
             )?.enqueue(object : Callback<List<TradeRecordDTO>> {
                 override fun onResponse(
@@ -80,5 +82,13 @@ class BuyFragment : Fragment() {
             1 -> NetworkConstants.TRADE_SELL
             else -> ""
         }
+    }
+
+    private suspend fun getUserId() : String {
+        val deferred = CoroutineScope(Dispatchers.IO).async {
+            MyDatabase.getInstance(requireContext()).getUserInfoDAO()
+                .selectUserInfo().get(0).uid
+        }
+        return deferred.await()
     }
 }

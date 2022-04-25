@@ -32,7 +32,7 @@ class MaxDivisionAdapter(private val list: List<MaxDivisionDTO>) : RecyclerView.
             holder.apply {
                 tvMatchType.text = getMatchType(list[position].matchType).await()
                 tvDivisionGrade.text = getGrade(list[position].division)
-                tvAchievementDate.text = list[position].achievementDate
+                tvAchievementDate.text = list[position].achievementDate.replace("T", "\n")
             }
         }
     }
