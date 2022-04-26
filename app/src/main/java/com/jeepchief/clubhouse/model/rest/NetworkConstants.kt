@@ -15,6 +15,7 @@ object NetworkConstants {
     const val PLAYER_IMAGE_URL = "https://fo4.dn.nexoncdn.co.kr/live/externalAssets/common/players/p%s.png"
     const val MATCH_DETAIL_URL = "https://api.nexon.co.kr/fifaonline4/v1.0/matches/{matchid}"
     const val MATCH_RECORD_ID_URL = "https://api.nexon.co.kr/fifaonline4/v1.0/users/{accessid}/matches?"
+    const val POSITION_URL = "https://static.api.nexon.co.kr/fifaonline4/latest/spposition.json"
 
     // Trade type
     const val TRADE_BUY = "buy"

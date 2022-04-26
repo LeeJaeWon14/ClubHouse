@@ -16,6 +16,7 @@ class Pref(private val context : Context) {
         const val FIRST_LOGIN = "FIRST_LOGIN"
         const val USER_NAME = "USER_NAME"
         const val META_DATA_DOWNLOAD = "META_DATA_DOWNLOAD"
+//        const val SHOWED_VOLTA_MESSAGE = "SHOWED_VOLTA_MESSAGE"
 
         private var instance : Pref? =null
         @Synchronized

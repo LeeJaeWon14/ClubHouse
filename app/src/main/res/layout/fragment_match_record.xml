@@ -16,4 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/sp_match_type"/>
+    <TextView
+        style="@style/TextTheme"
+        android:id="@+id/tv_select_guide"
+        android:text="@string/str_select_guide"
+        android:textSize="25dp"
+        android:layout_centerInParent="true" />
 </RelativeLayout>

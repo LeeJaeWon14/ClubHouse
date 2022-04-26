@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.ActivityMainBinding
 import com.jeepchief.clubhouse.databinding.DialogInputNicknameBinding
@@ -13,18 +14,17 @@ import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.database.metadata.division.DivisionEntity
 import com.jeepchief.clubhouse.model.database.metadata.matchtype.MatchTypeEntity
 import com.jeepchief.clubhouse.model.database.metadata.player.PlayerEntity
+import com.jeepchief.clubhouse.model.database.metadata.position.PositionEntity
 import com.jeepchief.clubhouse.model.database.userinfo.UserInfoEntity
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
-import com.jeepchief.clubhouse.model.rest.dto.DivisionDTO
-import com.jeepchief.clubhouse.model.rest.dto.MatchTypeDTO
-import com.jeepchief.clubhouse.model.rest.dto.PlayerDTO
-import com.jeepchief.clubhouse.model.rest.dto.UserInfoDTO
+import com.jeepchief.clubhouse.model.rest.dto.*
 import com.jeepchief.clubhouse.util.Log
 import com.jeepchief.clubhouse.util.Pref
 import com.jeepchief.clubhouse.view.matchrecord.MatchRecordFragment
 import com.jeepchief.clubhouse.view.traderecord.TradeRecordFragment
 import com.jeepchief.clubhouse.view.user.UserInfoFragment
+import com.jeepchief.clubhouse.viewmodel.FifaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,12 +38,15 @@ class MainActivity : AppCompatActivity() {
         const val TEST = "101001075"
     }
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: FifaViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        viewModel = ViewModelProvider(this).get(FifaViewModel::class.java)
         checkPref()
         initUi()
     }
@@ -250,6 +253,32 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<List<DivisionDTO>>, t: Throwable) = restFailureMessage(t)
+            })
+        }
+
+        // Get position data from server
+        CoroutineScope(Dispatchers.IO).launch {
+            val call = service?.getPosition()
+            call?.enqueue(object : Callback<List<PositionDTO>> {
+                override fun onResponse(
+                    call: Call<List<PositionDTO>>,
+                    response: Response<List<PositionDTO>>
+                ) {
+                    if(response.isSuccessful) {
+                        CoroutineScope(Dispatchers.Default).launch {
+                            response.body()?.let {
+                                it.forEach { dto ->
+                                    withContext(Dispatchers.IO) {
+                                        MyDatabase.getInstance(this@MainActivity).getPositionDAO()
+                                            .insertPosition(PositionEntity(dto.spposition, dto.desc))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<List<PositionDTO>>, t: Throwable) = restFailureMessage(t)
             })
         }
         binding.pbDownloading.isVisible = false

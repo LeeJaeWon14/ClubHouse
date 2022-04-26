@@ -12,14 +12,24 @@ import com.jeepchief.clubhouse.model.database.metadata.matchtype.MatchTypeDAO
 import com.jeepchief.clubhouse.model.database.metadata.matchtype.MatchTypeEntity
 import com.jeepchief.clubhouse.model.database.metadata.player.PlayerDAO
 import com.jeepchief.clubhouse.model.database.metadata.player.PlayerEntity
+import com.jeepchief.clubhouse.model.database.metadata.position.PositionDAO
+import com.jeepchief.clubhouse.model.database.metadata.position.PositionEntity
 import com.jeepchief.clubhouse.model.database.traderecord.TradeRecordDAO
 import com.jeepchief.clubhouse.model.database.traderecord.TradeRecordEntity
 import com.jeepchief.clubhouse.model.database.userinfo.UserInfoDAO
 import com.jeepchief.clubhouse.model.database.userinfo.UserInfoEntity
 
 @Database(
-    entities = [UserInfoEntity::class, TradeRecordEntity::class, MatchRecordEntity::class, PlayerEntity::class, MatchTypeEntity::class, DivisionEntity::class],
-    version = 3,
+    entities = [
+        UserInfoEntity::class,
+        TradeRecordEntity::class,
+        MatchRecordEntity::class,
+        PlayerEntity::class,
+        MatchTypeEntity::class,
+        DivisionEntity::class,
+        PositionEntity::class
+    ],
+    version = 4,
     exportSchema = false
 )
 abstract class MyDatabase : RoomDatabase() {
@@ -29,6 +39,7 @@ abstract class MyDatabase : RoomDatabase() {
     abstract fun getPlayerDAO() : PlayerDAO
     abstract fun getMatchTypeDAO() : MatchTypeDAO
     abstract fun getDivisionDAO() : DivisionDAO
+    abstract fun getPositionDAO() : PositionDAO
 
     companion object {
         private var instance: MyDatabase? = null

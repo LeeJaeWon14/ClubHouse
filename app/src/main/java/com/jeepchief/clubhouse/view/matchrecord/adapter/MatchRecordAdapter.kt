@@ -7,14 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.DialogMatchDetailBinding
+import com.jeepchief.clubhouse.databinding.DialogSquadBinding
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.model.rest.dto.MatchBean
+import com.jeepchief.clubhouse.model.rest.dto.PlayerBean
 import com.jeepchief.clubhouse.model.rest.dto.ShootDetailBean
 import com.jeepchief.clubhouse.model.rest.dto.UserInfoDTO
 import com.jeepchief.clubhouse.util.Log
@@ -27,6 +30,9 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
     private var userDTO : UserInfoDTO? = null
     private val firstBeanMap = hashMapOf<Int, List<ShootDetailBean>>()
     private val secondBeanMap = hashMapOf<Int, List<ShootDetailBean>>()
+    private val firstSquadMap = hashMapOf<Int, List<PlayerBean>>()
+    private val secondSquadMap = hashMapOf<Int, List<PlayerBean>>()
+
 
     class MatchRecordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvFirstName: TextView = view.findViewById(R.id.tv_first_name)
@@ -53,18 +59,29 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
                         call: Call<MatchBean>,
                         response: Response<MatchBean>
                     ) {
-                        if(response.isSuccessful) {
+                        if (response.isSuccessful) {
                             response.body()?.let {
+                                Log.e("response body is not null")
                                 tvPlayDate.text = it.matchDate.replace("T", " / ")
-                                firstBeanMap.put(position, getGoalInfo(it.matchInfoBean[0].shootDetailBean))
-                                secondBeanMap.put(position, getGoalInfo(it.matchInfoBean[1].shootDetailBean))
+                                firstBeanMap.put(
+                                    position,
+                                    getGoalInfo(it.matchInfoBean[0].shootDetailBean)
+                                )
+                                secondBeanMap.put(
+                                    position,
+                                    getGoalInfo(it.matchInfoBean[1].shootDetailBean)
+                                )
+                                firstSquadMap.put(position, it.matchInfoBean[0].playerBean)
+                                secondSquadMap.put(position, it.matchInfoBean[1].playerBean)
                                 it.matchInfoBean[0].run {
-                                    tvFirstName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
+                                    tvFirstName.text =
+                                        StringBuilder(nickname).append(" (${matchDetail.matchResult})")
                                     tvFirstScore.text = shoot.goalTotal.toString()
                                     getUserInfo(nickname, tvFirstLevel, itemView.context)
                                 }
                                 it.matchInfoBean[1].run {
-                                    tvSecondName.text = StringBuilder(nickname).append(" (${matchDetail.matchResult})")
+                                    tvSecondName.text =
+                                        StringBuilder(nickname).append(" (${matchDetail.matchResult})")
                                     tvSecondScore.text = shoot.goalTotal.toString()
                                     getUserInfo(nickname, tvSecondLevel, itemView.context)
                                 }
@@ -82,8 +99,6 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
                 })
             }
             llMatchRecord.setOnClickListener {
-//                Toast.makeText(itemView.context, itemView.context.getString(R.string.str_not_implemented_yet), Toast.LENGTH_SHORT).show()
-
                 val dlg = AlertDialog.Builder(itemView.context).create()
                 val dlgBinding = DialogMatchDetailBinding.inflate((itemView.context as Activity).layoutInflater)
                 dlg.setView(dlgBinding.root)
@@ -98,9 +113,17 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
                         layoutManager = LinearLayoutManager(itemView.context)
                         secondBeanMap[position]?.let { adapter = MatchDetailAdapter(it) }
                     }
+
+                    btnCloseMatch.setOnClickListener {
+                        dlg.dismiss()
+                    }
+
+                    btnMatchSquad.setOnClickListener {
+                        showSquadDialog(itemView.context, position)
+                    }
                 }
 
-//                dlg.setCancelable(false)
+                dlg.setCancelable(false)
                 dlg.show()
             }
         }
@@ -142,5 +165,25 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
         }
 
         return goalInfoList
+    }
+
+    private fun showSquadDialog(context: Context, position: Int) {
+        val dlgBinding = DialogSquadBinding.inflate((context as Activity).layoutInflater)
+        val dlg = AlertDialog.Builder(context).create()
+
+        dlg.setView(dlgBinding.root)
+
+        dlgBinding.apply {
+            rvFirstSquad.apply {
+                layoutManager = LinearLayoutManager(context)
+                firstSquadMap[position]?.let { Log.e(it.toString());SquadAdapter(it) }
+            }
+
+            rvSecondSquad.apply {
+                layoutManager = LinearLayoutManager(context)
+                secondSquadMap[position]?.let { Log.e(it.toString());SquadAdapter(it) }
+            }
+        }
+        dlg.show()
     }
 }

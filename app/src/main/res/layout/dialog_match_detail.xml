@@ -1,36 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/primary_black"
-    android:padding="5dp"
-    android:orientation="horizontal">
+    android:padding="10dp">
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_first_match_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_first_match_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_second_match_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <TextView
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="@color/white" />
-
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_second_match_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+        <Button
+            style="@style/ButtonTheme"
+            android:id="@+id/btn_match_squad"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/str_squad"/>
+        <Button
+            style="@style/ButtonTheme"
+            android:id="@+id/btn_close_match"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="15dp"
+            android:text="@string/str_guide_close"/>
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.R
@@ -14,6 +16,7 @@ import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
 import com.jeepchief.clubhouse.util.Log
+import com.jeepchief.clubhouse.util.Pref
 import com.jeepchief.clubhouse.view.matchrecord.adapter.MatchRecordAdapter
 import kotlinx.coroutines.*
 import retrofit2.Call
@@ -36,8 +39,12 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
         super.onViewCreated(view, savedInstanceState)
 
         CoroutineScope(Dispatchers.Main).launch {
-            binding.apply {
 
+            binding.apply {
+//                if(Pref.getInstance(requireContext())?.getBoolean(Pref.SHOWED_VOLTA_MESSAGE) == false) {
+//                    Toast.makeText(requireContext(), getString(R.string.str_volta_is_not_stable), Toast.LENGTH_SHORT).show()
+//                    Pref.getInstance(requireContext())?.setValue(Pref.SHOWED_VOLTA_MESSAGE, true)
+//                }
                 spMatchType.apply {
                     val spAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, getMatchTypes().await())
                     adapter = spAdapter
@@ -70,16 +77,20 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 ) {
                     if(response.isSuccessful) {
                         response.body()?.let {
-//                            it.forEach { id ->
-//                                Log.e("matchId is ${id}")
-//                            }
-                            binding.rvMatchRecord.apply {
-                                layoutManager = LinearLayoutManager(requireContext())
-                                adapter = MatchRecordAdapter(it)
+                            binding.apply {
+                                rvMatchRecord.apply {
+                                    layoutManager = LinearLayoutManager(requireContext())
+                                    adapter = MatchRecordAdapter(it)
+                                }
+                                tvSelectGuide.isVisible = false
                             }
                         } ?: run {
                             Log.e("matchId response is null")
+                            Toast.makeText(requireContext(), "response body is null!!", Toast.LENGTH_SHORT).show()
                         }
+                    } else {
+                        Log.e("matchId response is null")
+                        Toast.makeText(requireContext(), "response is fail", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -91,7 +102,7 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        // no-op
+        /* no-op */
     }
 
     private suspend fun getMatchTypes() : Deferred<List<String>> {
@@ -107,5 +118,12 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 .selectUserInfo().get(0).uid
         }
         return deferred.await()
+    }
+
+    fun showEmptyText() {
+        binding.tvSelectGuide.apply {
+            isVisible = true
+            text = getString(R.string.str_not_found_record)
+        }
     }
 }

@@ -47,4 +47,7 @@ interface FifaService {
         @Query("offset") offset: Int = 0,
         @Query("limit") limit: Int = 10
     ) : Call<List<String>>
+
+    @GET(NetworkConstants.POSITION_URL)
+    fun getPosition() : Call<List<PositionDTO>>
 }
