@@ -7,7 +7,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.ActivityMainBinding
 import com.jeepchief.clubhouse.databinding.DialogInputNicknameBinding
@@ -26,7 +25,6 @@ import com.jeepchief.clubhouse.view.matchrecord.MatchRecordFragment
 import com.jeepchief.clubhouse.view.traderecord.TradeRecordFragment
 import com.jeepchief.clubhouse.view.user.UserInfoFragment
 import com.jeepchief.clubhouse.viewmodel.FifaViewModel
-import com.jeepchief.clubhouse.viewmodel.MatchRecordViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,9 +34,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        const val TEST = "101001075"
-    }
     private lateinit var binding: ActivityMainBinding
     private val viewModel: FifaViewModel by viewModels()
 
@@ -48,10 +43,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.e("test value is ${viewModel.test}")
-
-
-//        viewModel = ViewModelProvider(this).get(MatchRecordViewModel::class.java)
         checkPref()
         initUi()
     }
@@ -63,8 +54,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkPref() {
         Pref.getInstance(this)?.let {
-            if(it.getString(Pref.USER_NAME) == "")
+            if(it.getString(Pref.USER_ID) == "") {
                 showLoginDialog()
+            } else viewModel.userId = Pref.getInstance(this)?.getString(Pref.USER_ID).toString()
             if(!it.getBoolean(Pref.META_DATA_DOWNLOAD))
                 downloadMetadata()
         }
@@ -110,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnItemSelectedListener true
             }
 
-            if(Pref.getInstance(this@MainActivity)?.getString(Pref.USER_NAME) != "")
+            if(Pref.getInstance(this@MainActivity)?.getString(Pref.USER_ID) != "")
                 binding.bnvBottoms.selectedItemId = R.id.menu_user
         }
     }
@@ -136,7 +128,8 @@ class MainActivity : AppCompatActivity() {
                             response.body()?.let {
                                 Log.e("id=${it.accessId}, nickname=${it.nickname}, level=${it.level}")
                                 Pref.getInstance(this@MainActivity)
-                                    ?.setValue(Pref.USER_NAME, it.nickname)
+                                    ?.setValue(Pref.USER_ID, it.accessId)
+                                viewModel.userId = it.accessId
 
                                 CoroutineScope(Dispatchers.IO).launch {
                                     MyDatabase.getInstance(this@MainActivity).getUserInfoDAO().run {

@@ -92,7 +92,7 @@ class UserInfoFragment : Fragment() {
                                 val userEntity = selectUserInfo().get(0)
                                 deleteUserInfo(userEntity)
                             }
-                            Pref.getInstance(requireContext())?.removeValue(Pref.USER_NAME)
+                            Pref.getInstance(requireContext())?.removeValue(Pref.USER_ID)
                             withContext(Dispatchers.Main) {
                                 requireActivity().finishAffinity()
                                 startActivity(Intent(requireContext(), MainActivity::class.java))

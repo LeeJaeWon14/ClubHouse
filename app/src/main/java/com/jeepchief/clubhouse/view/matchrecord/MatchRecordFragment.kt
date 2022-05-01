@@ -45,7 +45,6 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(MatchRecordViewModel::class.java)
-        Log.e("${fifaVM.javaClass.simpleName} >> ${fifaVM.test}")
 
         CoroutineScope(Dispatchers.Main).launch {
 
@@ -76,7 +75,7 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 .selectMatchTypeId(binding.spMatchType.selectedItem?.toString()!!)
             val service = RetroClient.getInstance().create(FifaService::class.java)
             val call = service?.getMatchId(
-                getUserId(),
+                fifaVM.userId,
                 matchTypeId
             )
             call?.enqueue(object : Callback<List<String>> {
@@ -136,21 +135,6 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
         return CoroutineScope(Dispatchers.IO).async {
             MyDatabase.getInstance(requireContext()).getMatchTypeDAO()
                 .selectAllMatchType()
-        }
-    }
-
-    private suspend fun getUserId() : String {
-        val deferred = CoroutineScope(Dispatchers.IO).async {
-            MyDatabase.getInstance(requireContext()).getUserInfoDAO()
-                .selectUserInfo().get(0).uid
-        }
-        return deferred.await()
-    }
-
-    fun showEmptyText() {
-        binding.tvSelectGuide.apply {
-            isVisible = true
-            text = getString(R.string.str_not_found_record)
         }
     }
 
