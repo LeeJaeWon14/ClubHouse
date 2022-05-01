@@ -9,15 +9,19 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.FragmentMatchRecordBinding
 import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.rest.FifaService
 import com.jeepchief.clubhouse.model.rest.RetroClient
+import com.jeepchief.clubhouse.model.rest.dto.MatchBean
 import com.jeepchief.clubhouse.util.Log
-import com.jeepchief.clubhouse.util.Pref
 import com.jeepchief.clubhouse.view.matchrecord.adapter.MatchRecordAdapter
+import com.jeepchief.clubhouse.viewmodel.FifaViewModel
+import com.jeepchief.clubhouse.viewmodel.MatchRecordViewModel
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +29,8 @@ import retrofit2.Response
 
 class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var _binding: FragmentMatchRecordBinding? = null
+    private lateinit var viewModel: MatchRecordViewModel
+    private val fifaVM: FifaViewModel by activityViewModels()
     private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,13 +44,17 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = ViewModelProvider(requireActivity()).get(MatchRecordViewModel::class.java)
+        Log.e("${fifaVM.javaClass.simpleName} >> ${fifaVM.test}")
+
         CoroutineScope(Dispatchers.Main).launch {
 
             binding.apply {
-//                if(Pref.getInstance(requireContext())?.getBoolean(Pref.SHOWED_VOLTA_MESSAGE) == false) {
-//                    Toast.makeText(requireContext(), getString(R.string.str_volta_is_not_stable), Toast.LENGTH_SHORT).show()
-//                    Pref.getInstance(requireContext())?.setValue(Pref.SHOWED_VOLTA_MESSAGE, true)
-//                }
+                if(!viewModel.isShowedVoltaMsg) {
+                    Toast.makeText(requireContext(), getString(R.string.str_volta_is_not_stable), Toast.LENGTH_SHORT).show()
+                    viewModel.isShowedVoltaMsg = true
+                }
+
                 spMatchType.apply {
                     val spAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, getMatchTypes().await())
                     adapter = spAdapter
@@ -64,7 +74,6 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
         CoroutineScope(Dispatchers.IO).launch {
             val matchTypeId = MyDatabase.getInstance(requireContext()).getMatchTypeDAO()
                 .selectMatchTypeId(binding.spMatchType.selectedItem?.toString()!!)
-
             val service = RetroClient.getInstance().create(FifaService::class.java)
             val call = service?.getMatchId(
                 getUserId(),
@@ -75,22 +84,39 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     call: Call<List<String>>,
                     response: Response<List<String>>
                 ) {
-                    if(response.isSuccessful) {
-                        response.body()?.let {
-                            binding.apply {
-                                rvMatchRecord.apply {
-                                    layoutManager = LinearLayoutManager(requireContext())
-                                    adapter = MatchRecordAdapter(it)
+                    if (response.isSuccessful) {
+                        response.body()?.let { idList ->
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                binding.apply {
+                                    pbProg.isVisible = true
+                                    tvSelectGuide.isVisible = false
+                                    rvMatchRecord.adapter = null
                                 }
-                                tvSelectGuide.isVisible = false
+                                fifaVM.matchRecordMap.get(matchTypeId)?.let { // list가 null이 아니면 view 초기화
+                                    initializeRecyclerView(it)
+                                } ?: run { // list가 null일때
+                                    Log.e("record is null")
+                                    val beanList = addBean(idList) // suspend 함수를 통해 list에 bean들이 모두 삽입될 때까지 중단
+
+                                    Log.e("before put, map is ${fifaVM.matchRecordMap.put(matchTypeId, beanList).toString()}")
+                                    fifaVM.matchRecordMap.put(matchTypeId, beanList)?.let { // 삽입된 list들로 view 초기화
+                                        initializeRecyclerView(it)
+                                    }
+                                }
                             }
                         } ?: run {
                             Log.e("matchId response is null")
-                            Toast.makeText(requireContext(), "response body is null!!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "response body is null!!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else {
                         Log.e("matchId response is null")
-                        Toast.makeText(requireContext(), "response is fail", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "response is fail", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
 
@@ -99,6 +125,7 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             })
         }
+        Log.e("onItemSelected end")
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -125,5 +152,33 @@ class MatchRecordFragment : Fragment(), AdapterView.OnItemSelectedListener {
             isVisible = true
             text = getString(R.string.str_not_found_record)
         }
+    }
+
+    private fun initializeRecyclerView(beanList: List<MatchBean>) {
+        binding.apply {
+            Log.e("RecyclerView initialize.. list is ${beanList.isEmpty()}")
+            rvMatchRecord.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = MatchRecordAdapter(beanList)
+            }
+            pbProg.isVisible = false
+        }
+    }
+
+    private suspend fun addBean(idList: List<String>) : MutableList<MatchBean> {
+        val beanList: MutableList<MatchBean> = mutableListOf()
+        withContext(Dispatchers.IO) {
+            idList.forEach { id ->
+                val body = RetroClient.getInstance().create(FifaService::class.java)
+                    .getMatchRecord(id).execute().body()
+                body?.let {
+                    Log.e("add into been")
+                    beanList.add(it)
+                }
+            }
+            Log.e("add into been, $beanList")
+        }
+
+        return beanList
     }
 }

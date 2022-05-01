@@ -26,7 +26,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<MatchRecordAdapter.MatchRecordViewHolder>() {
+class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapter<MatchRecordAdapter.MatchRecordViewHolder>() {
     private var userDTO : UserInfoDTO? = null
     private val firstBeanMap = hashMapOf<Int, List<ShootDetailBean>>()
     private val secondBeanMap = hashMapOf<Int, List<ShootDetailBean>>()
@@ -52,52 +52,32 @@ class MatchRecordAdapter(private val list: List<String>) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: MatchRecordViewHolder, position: Int) {
         holder.apply {
-            CoroutineScope(Dispatchers.IO).launch {
-                val service = RetroClient.getInstance().create(FifaService::class.java)
-                service.getMatchRecord(list[position]).enqueue(object : Callback<MatchBean> {
-                    override fun onResponse(
-                        call: Call<MatchBean>,
-                        response: Response<MatchBean>
-                    ) {
-                        if (response.isSuccessful) {
-                            response.body()?.let {
-                                Log.e("response body is not null")
-                                tvPlayDate.text = it.matchDate.replace("T", " / ")
-                                firstBeanMap.put(
-                                    position,
-                                    getGoalInfo(it.matchInfoBean[0].shootDetailBean)
-                                )
-                                secondBeanMap.put(
-                                    position,
-                                    getGoalInfo(it.matchInfoBean[1].shootDetailBean)
-                                )
-                                firstSquadMap.put(position, it.matchInfoBean[0].playerBean)
-                                secondSquadMap.put(position, it.matchInfoBean[1].playerBean)
-                                it.matchInfoBean[0].run {
-                                    tvFirstName.text =
-                                        StringBuilder(nickname).append(" (${matchDetail.matchResult})")
-                                    tvFirstScore.text = shoot.goalTotal.toString()
-                                    getUserInfo(nickname, tvFirstLevel, itemView.context)
-                                }
-                                it.matchInfoBean[1].run {
-                                    tvSecondName.text =
-                                        StringBuilder(nickname).append(" (${matchDetail.matchResult})")
-                                    tvSecondScore.text = shoot.goalTotal.toString()
-                                    getUserInfo(nickname, tvSecondLevel, itemView.context)
-                                }
-                            } ?: run {
-                                Log.e("response body is null!!")
-                            }
-                        } else {
-                            Log.e("response is fail")
-                        }
-                    }
-
-                    override fun onFailure(call: Call<MatchBean>, t: Throwable) {
-                        Log.e("match record is fail, message is ${t.message}")
-                    }
-                })
+            list[position].also {
+                tvPlayDate.text = it.matchDate.replace("T", " / ")
+                firstBeanMap.put(
+                    position,
+                    getGoalInfo(it.matchInfoBean[0].shootDetailBean)
+                )
+                secondBeanMap.put(
+                    position,
+                    getGoalInfo(it.matchInfoBean[1].shootDetailBean)
+                )
+                firstSquadMap.put(position, it.matchInfoBean[0].playerBean)
+                secondSquadMap.put(position, it.matchInfoBean[1].playerBean)
+                it.matchInfoBean[0].run {
+                    tvFirstName.text =
+                        StringBuilder(nickname).append(" (${matchDetail.matchResult})")
+                    tvFirstScore.text = shoot.goalTotal.toString()
+                    getUserInfo(nickname, tvFirstLevel, itemView.context)
+                }
+                it.matchInfoBean[1].run {
+                    tvSecondName.text =
+                        StringBuilder(nickname).append(" (${matchDetail.matchResult})")
+                    tvSecondScore.text = shoot.goalTotal.toString()
+                    getUserInfo(nickname, tvSecondLevel, itemView.context)
+                }
             }
+
             llMatchRecord.setOnClickListener {
                 val dlg = AlertDialog.Builder(itemView.context).create()
                 val dlgBinding = DialogMatchDetailBinding.inflate((itemView.context as Activity).layoutInflater)

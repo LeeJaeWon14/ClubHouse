@@ -2,6 +2,7 @@ package com.jeepchief.clubhouse.view.activity
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -25,6 +26,7 @@ import com.jeepchief.clubhouse.view.matchrecord.MatchRecordFragment
 import com.jeepchief.clubhouse.view.traderecord.TradeRecordFragment
 import com.jeepchief.clubhouse.view.user.UserInfoFragment
 import com.jeepchief.clubhouse.viewmodel.FifaViewModel
+import com.jeepchief.clubhouse.viewmodel.MatchRecordViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,17 +40,25 @@ class MainActivity : AppCompatActivity() {
         const val TEST = "101001075"
     }
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: FifaViewModel
+    private val viewModel: FifaViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Log.e("test value is ${viewModel.test}")
 
-        viewModel = ViewModelProvider(this).get(FifaViewModel::class.java)
+
+//        viewModel = ViewModelProvider(this).get(MatchRecordViewModel::class.java)
         checkPref()
         initUi()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e("onPause")
     }
 
     private fun checkPref() {

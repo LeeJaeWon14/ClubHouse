@@ -1,9 +1,12 @@
 package com.jeepchief.clubhouse.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.jeepchief.clubhouse.model.database.userinfo.UserInfoEntity
+import com.jeepchief.clubhouse.model.rest.dto.MatchBean
 
 class FifaViewModel : ViewModel() {
-    //TODO : user id is will set in here
+    val test = 123
+    var userInfo: UserInfoEntity? = null
 
-    var showedVoltaMsg: Boolean = false
+    val matchRecordMap: HashMap<Int, List<MatchBean>> = hashMapOf()
 }
