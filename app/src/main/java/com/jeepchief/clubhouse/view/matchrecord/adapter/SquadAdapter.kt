@@ -41,11 +41,7 @@ class SquadAdapter(private val squadList: List<PlayerBean>) : RecyclerView.Adapt
                     .into(ivPlayerImage)
 
                 tvPlayerName.text = getPlayerName(squadList[position].spId.toString(), itemView.context).plus("\t +${squadList[position].spGrade}")
-                try {
-                    tvPlayerPosition.text = getPlayerPosition(squadList[position].spId, itemView.context)
-                } catch(e: Exception) {
-                    tvPlayerPosition.text = ""
-                }
+                tvPlayerPosition.text = getPlayerPosition(squadList[position].spPosition, itemView.context)
             }
         }
     }
