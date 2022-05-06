@@ -41,49 +41,19 @@ class BuyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        Toast.makeText(requireContext(), arguments?.getInt("page").toString(), Toast.LENGTH_SHORT).show()
-
-        Log.e("${viewModel.tradeRecordList.isEmpty()}")
-        if(viewModel.tradeRecordList.isEmpty()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val service = RetroClient.getInstance().create(FifaService::class.java)
-                service?.getTradeRecord(
-                    viewModel.userId,
-                    checkTradeType(arguments?.getInt("page"))
-                )?.enqueue(object : Callback<List<TradeRecordDTO>> {
-                    override fun onResponse(
-                        call: Call<List<TradeRecordDTO>>,
-                        response: Response<List<TradeRecordDTO>>
-                    ) {
-                        if(response.isSuccessful) {
-                            response.body()?.let {
-                                viewModel.tradeRecordList = it
-                                requireActivity().runOnUiThread {
-                                    binding.rvTradeList.apply {
-                                        layoutManager = LinearLayoutManager(requireContext())
-                                        adapter = TradeListAdapter(it)
-                                    }
-                                }
-                            } ?: run {
-                                Log.e("response is null")
-                            }
-                        }
+        arguments?.getInt("page")?.let { page ->
+            when {
+                viewModel.buyTradeRecordList.isEmpty() && page == 0 -> getTradeRecord(NetworkConstants.TRADE_BUY)
+                viewModel.sellTradeRecordList.isEmpty() && page == 1 -> getTradeRecord(NetworkConstants.TRADE_SELL)
+                else -> {
+                    Log.e("already have trade record")
+                    binding.rvTradeList.apply {
+                        layoutManager = LinearLayoutManager(requireContext())
+                        adapter = TradeListAdapter(getTradeList(page))
                     }
-
-                    override fun onFailure(call: Call<List<TradeRecordDTO>>, t: Throwable) {
-                        Log.e("rest fail, message is ${t.message}")
-                    }
-                })
+                }
             }
         }
-        else {
-            Log.e("already have trade record")
-            binding.rvTradeList.apply {
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = TradeListAdapter(viewModel.tradeRecordList)
-            }
-        }
-
     }
 
     override fun onDestroy() {
@@ -96,6 +66,50 @@ class BuyFragment : Fragment() {
             0 -> NetworkConstants.TRADE_BUY
             1 -> NetworkConstants.TRADE_SELL
             else -> ""
+        }
+    }
+
+    private fun getTradeList(page: Int) : List<TradeRecordDTO> {
+        return when(page) {
+            0 -> viewModel.buyTradeRecordList
+            1 -> viewModel.sellTradeRecordList
+            else -> listOf()
+        }
+    }
+
+    private fun getTradeRecord(tradeType: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val service = RetroClient.getInstance().create(FifaService::class.java)
+            service?.getTradeRecord(
+                viewModel.userId,
+                tradeType
+            )?.enqueue(object : Callback<List<TradeRecordDTO>> {
+                override fun onResponse(
+                    call: Call<List<TradeRecordDTO>>,
+                    response: Response<List<TradeRecordDTO>>
+                ) {
+                    if(response.isSuccessful) {
+                        response.body()?.let {
+                            when(tradeType) {
+                                NetworkConstants.TRADE_BUY -> viewModel.buyTradeRecordList = it
+                                NetworkConstants.TRADE_SELL -> viewModel.sellTradeRecordList = it
+                            }
+                            requireActivity().runOnUiThread {
+                                binding.rvTradeList.apply {
+                                    layoutManager = LinearLayoutManager(requireContext())
+                                    adapter = TradeListAdapter(it)
+                                }
+                            }
+                        } ?: run {
+                            Log.e("response is null")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<List<TradeRecordDTO>>, t: Throwable) {
+                    Log.e("rest fail, message is ${t.message}")
+                }
+            })
         }
     }
 }

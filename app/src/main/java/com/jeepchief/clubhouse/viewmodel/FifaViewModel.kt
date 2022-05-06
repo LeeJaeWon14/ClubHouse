@@ -9,5 +9,6 @@ class FifaViewModel : ViewModel() {
     var userId = ""
 
     val matchRecordMap: HashMap<Int, List<MatchBean>> = hashMapOf()
-    var tradeRecordList: List<TradeRecordDTO> = listOf()
+    var buyTradeRecordList: List<TradeRecordDTO> = listOf()
+    var sellTradeRecordList: List<TradeRecordDTO> = listOf()
 }
