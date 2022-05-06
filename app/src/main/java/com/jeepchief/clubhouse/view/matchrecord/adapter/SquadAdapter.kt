@@ -31,7 +31,6 @@ class SquadAdapter(private val squadList: List<PlayerBean>) : RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(holder: SquadViewHolder, position: Int) {
-        Log.e("squad position is $position")
         holder.apply {
             CoroutineScope(Dispatchers.Main).launch {
                 Glide.with(itemView.context)
@@ -42,13 +41,16 @@ class SquadAdapter(private val squadList: List<PlayerBean>) : RecyclerView.Adapt
                     .into(ivPlayerImage)
 
                 tvPlayerName.text = getPlayerName(squadList[position].spId.toString(), itemView.context).plus("\t +${squadList[position].spGrade}")
-                tvPlayerPosition.text = getPlayerPosition(squadList[position].spId, itemView.context)
+                try {
+                    tvPlayerPosition.text = getPlayerPosition(squadList[position].spId, itemView.context)
+                } catch(e: Exception) {
+                    tvPlayerPosition.text = ""
+                }
             }
         }
     }
 
     override fun getItemCount(): Int {
-        Log.e("squadList size is ${squadList.size}")
         return squadList.size
     }
 

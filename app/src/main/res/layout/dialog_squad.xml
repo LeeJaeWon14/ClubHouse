@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_black"
-    android:orientation="horizontal"
     android:padding="10dp">
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_first_squad"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_first_squad"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+        android:layout_toStartOf="@+id/center_line"
+        android:layout_above="@+id/btn_squad_close"/>
 
     <TextView
+        android:id="@+id/center_line"
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
-        android:background="@color/white" />
+        android:background="@color/white"
+        android:layout_centerInParent="true"/>
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_second_squad"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_toEndOf="@+id/center_line"
+        android:layout_above="@+id/btn_squad_close" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_second_squad"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btn_squad_close"
+        style="@style/ButtonTheme"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:text = "@string/str_guide_close"/>
 
-</LinearLayout>
+</RelativeLayout>

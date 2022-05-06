@@ -140,6 +140,7 @@ class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapt
     private fun getGoalInfo(shootDetailBean: List<ShootDetailBean>) : List<ShootDetailBean> {
         val goalInfoList: MutableList<ShootDetailBean> = mutableListOf()
         shootDetailBean.forEach { bean ->
+            // if result value is 3, it is goal.
             if(bean.result == 3)
                 goalInfoList.add(bean)
         }
@@ -156,13 +157,15 @@ class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapt
         dlgBinding.apply {
             rvFirstSquad.apply {
                 layoutManager = LinearLayoutManager(context)
-                firstSquadMap[position]?.let { Log.e(it.toString());SquadAdapter(it) }
+                firstSquadMap[position]?.let { adapter = SquadAdapter(it) }
             }
 
             rvSecondSquad.apply {
                 layoutManager = LinearLayoutManager(context)
-                secondSquadMap[position]?.let { Log.e(it.toString());SquadAdapter(it) }
+                secondSquadMap[position]?.let { adapter = SquadAdapter(it) }
             }
+
+            btnSquadClose.setOnClickListener { dlg.dismiss() }
         }
         dlg.show()
     }
