@@ -66,8 +66,11 @@ class UserInfoFragment : Fragment() {
             btnGradeGuide.setOnClickListener {
                CoroutineScope(Dispatchers.Main).launch {
                    val dlgBinding = LayoutGradeGuideBinding.inflate(layoutInflater)
-                   val dlg = AlertDialog.Builder(requireContext()).create()
-                   dlg.setView(dlgBinding.root)
+                   val dlg = AlertDialog.Builder(requireContext()).create().apply {
+                       setView(dlgBinding.root)
+                       setCancelable(false)
+                   }
+
 
                    dlgBinding.apply {
                        rvGradeGuide.apply {
@@ -78,7 +81,6 @@ class UserInfoFragment : Fragment() {
                            dlg.dismiss()
                        }
                    }
-                   dlg.setCancelable(false)
                    dlg.show()
                }
             }

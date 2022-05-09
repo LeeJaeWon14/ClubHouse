@@ -79,9 +79,11 @@ class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapt
             }
 
             llMatchRecord.setOnClickListener {
-                val dlg = AlertDialog.Builder(itemView.context).create()
                 val dlgBinding = DialogMatchDetailBinding.inflate((itemView.context as Activity).layoutInflater)
-                dlg.setView(dlgBinding.root)
+                val dlg = AlertDialog.Builder(itemView.context).create().apply {
+                    setView(dlgBinding.root)
+                    setCancelable(false)
+                }
 
                 dlgBinding.apply {
                     rvFirstMatchDetail.apply {
@@ -102,8 +104,6 @@ class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapt
                         showSquadDialog(itemView.context, position)
                     }
                 }
-
-                dlg.setCancelable(false)
                 dlg.show()
             }
         }
@@ -150,9 +150,10 @@ class MatchRecordAdapter(private val list: List<MatchBean>) : RecyclerView.Adapt
 
     private fun showSquadDialog(context: Context, position: Int) {
         val dlgBinding = DialogSquadBinding.inflate((context as Activity).layoutInflater)
-        val dlg = AlertDialog.Builder(context).create()
-
-        dlg.setView(dlgBinding.root)
+        val dlg = AlertDialog.Builder(context).create().apply {
+            setView(dlgBinding.root)
+            setCancelable(false)
+        }
 
         dlgBinding.apply {
             rvFirstSquad.apply {
