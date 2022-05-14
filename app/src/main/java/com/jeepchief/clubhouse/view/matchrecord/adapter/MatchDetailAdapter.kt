@@ -16,8 +16,9 @@ import kotlinx.coroutines.launch
 import java.lang.StringBuilder
 import kotlin.math.pow
 
-class MatchDetailAdapter(private val goalInfoList: List<ShootDetailBean>) : RecyclerView.Adapter<MatchDetailAdapter.MatchDetailViewHolder>() {
+class MatchDetailAdapter(_goalInfoList: List<ShootDetailBean>) : RecyclerView.Adapter<MatchDetailAdapter.MatchDetailViewHolder>() {
     private lateinit var context: Context
+    private var goalInfoList: List<ShootDetailBean> = _goalInfoList.sortedBy { it.goalTime }
     class MatchDetailViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvPlayerName: TextView = view.findViewById(R.id.tv_goal_player)
         val tvGoalTime: TextView = view.findViewById(R.id.tv_goal_time)

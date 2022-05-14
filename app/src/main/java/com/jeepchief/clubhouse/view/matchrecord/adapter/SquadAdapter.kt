@@ -18,7 +18,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class SquadAdapter(private val squadList: List<PlayerBean>) : RecyclerView.Adapter<SquadAdapter.SquadViewHolder>() {
+class SquadAdapter(_squadList: List<PlayerBean>) : RecyclerView.Adapter<SquadAdapter.SquadViewHolder>() {
+    private var squadList: List<PlayerBean> = _squadList.sortedBy { it.spPosition }
+
     class SquadViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivPlayerImage: ImageView = view.findViewById(R.id.iv_squad_player)
         val tvPlayerName: TextView = view.findViewById(R.id.tv_squad_player_name)
