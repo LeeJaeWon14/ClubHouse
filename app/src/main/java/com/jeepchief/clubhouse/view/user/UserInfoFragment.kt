@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.databinding.FragmentUserInfoBinding
@@ -24,6 +25,7 @@ import com.jeepchief.clubhouse.util.Pref
 import com.jeepchief.clubhouse.view.activity.MainActivity
 import com.jeepchief.clubhouse.view.user.adapter.GradeGuideAdapter
 import com.jeepchief.clubhouse.view.user.adapter.MaxDivisionAdapter
+import com.jeepchief.clubhouse.viewmodel.FifaViewModel
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,6 +35,7 @@ import java.lang.IndexOutOfBoundsException
 class UserInfoFragment : Fragment() {
     private var _binding : FragmentUserInfoBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: FifaViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,7 +56,7 @@ class UserInfoFragment : Fragment() {
 
             CoroutineScope(Dispatchers.Main).launch {
                 try {
-                    getUserInfo().also { user ->
+                    viewModel.getUserInfo(requireContext()).selectUserInfo()[0].also { user ->
                         tvNickname.text = StringBuilder("Name : ").append(user.nickname).toString()
                         tvLevel.text = StringBuilder("Lv. ").append(user.level.toString()).toString()
                         selectMaxDivision(user.uid)

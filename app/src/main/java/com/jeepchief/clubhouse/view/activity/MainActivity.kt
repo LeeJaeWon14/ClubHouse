@@ -131,18 +131,31 @@ class MainActivity : AppCompatActivity() {
                                     ?.setValue(Pref.USER_ID, it.accessId)
                                 viewModel.userId = it.accessId
 
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    MyDatabase.getInstance(this@MainActivity).getUserInfoDAO().run {
-                                        val checkList = checkDistinctUserInfo(it.nickname)
-                                        if (checkList.isEmpty()) {
-                                            insertUserInfo(
-                                                UserInfoEntity(
-                                                    it.nickname,
-                                                    it.accessId,
-                                                    it.level
-                                                )
+//                                CoroutineScope(Dispatchers.IO).launch {
+//                                    MyDatabase.getInstance(this@MainActivity).getUserInfoDAO().run {
+//                                        val checkList = checkDistinctUserInfo(it.nickname)
+//                                        if (checkList.isEmpty()) {
+//                                            insertUserInfo(
+//                                                UserInfoEntity(
+//                                                    it.nickname,
+//                                                    it.accessId,
+//                                                    it.level
+//                                                )
+//                                            )
+//                                        }
+//                                    }
+//                                }
+
+                                viewModel.getUserInfo(this@MainActivity).run {
+                                    val checkList = checkDistinctUserInfo(it.nickname)
+                                    if (checkList.isEmpty()) {
+                                        insertUserInfo(
+                                            UserInfoEntity(
+                                                it.nickname,
+                                                it.accessId,
+                                                it.level
                                             )
-                                        }
+                                        )
                                     }
                                 }
 
