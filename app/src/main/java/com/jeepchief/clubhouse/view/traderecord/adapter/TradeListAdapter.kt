@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -17,14 +18,11 @@ import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.rest.NetworkConstants
 import com.jeepchief.clubhouse.model.rest.dto.TradeRecordDTO
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import com.jeepchief.clubhouse.util.Log
+import kotlinx.coroutines.*
 import java.text.DecimalFormat
 
 class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Adapter<TradeListAdapter.TradeListViewHolder>() {
-    private var NOT_FIND_ACTION_SHOT = false
     class TradeListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivPlayer: ImageView = view.findViewById(R.id.iv_player)
         val tvPlayerName: TextView = view.findViewById(R.id.tv_goal_player)
@@ -50,7 +48,12 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
                             target: Target<Drawable>?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            NOT_FIND_ACTION_SHOT = true
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Glide.with(itemView.context)
+                                    .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, makePid(list[position].spid.toString())))
+                                    .centerCrop()
+                                    .into(ivPlayer)
+                            }
 
                             return false
                         }
@@ -69,14 +72,6 @@ class TradeListAdapter(private val list: List<TradeRecordDTO>) : RecyclerView.Ad
                     .thumbnail(0.2f)
                     .centerCrop()
                     .into(ivPlayer)
-
-//                if(NOT_FIND_ACTION_SHOT) {
-//                    Glide.with(itemView.context)
-//                        .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, makePid(list[position].spid.toString())))
-//                        .centerCrop()
-//                        .into(ivPlayer)
-//                    NOT_FIND_ACTION_SHOT = false
-//                }
 
                 tvPlayerName.text = getPlayerName(list[position].spid.toString(), itemView.context).plus("\t +${list[position].grade}")
                 tvPlayerPrice.text = makeComma(list[position].value.toString()).plus("BP")

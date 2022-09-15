@@ -1,6 +1,7 @@
 package com.jeepchief.clubhouse.view.matchrecord.adapter
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.jeepchief.clubhouse.R
 import com.jeepchief.clubhouse.model.database.MyDatabase
 import com.jeepchief.clubhouse.model.rest.NetworkConstants
@@ -38,6 +43,34 @@ class SquadAdapter(_squadList: List<PlayerBean>) : RecyclerView.Adapter<SquadAda
                 Glide.with(itemView.context)
                     .load(String.format(NetworkConstants.PLAYER_ACTION_SHOT_URL, squadList[position].spId))
                     .error(R.drawable.ic_launcher_foreground)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Glide.with(itemView.context)
+                                    .load(String.format(NetworkConstants.PLAYER_IMAGE_URL, makePid(squadList[position].spId.toString())))
+                                    .centerCrop()
+                                    .into(ivPlayerImage)
+                            }
+
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+
+                            return false
+                        }
+                    })
                     .thumbnail(0.2f)
                     .centerCrop()
                     .into(ivPlayerImage)
@@ -66,5 +99,15 @@ class SquadAdapter(_squadList: List<PlayerBean>) : RecyclerView.Adapter<SquadAda
                 .selectPosition(spid)
         }
         return deferred.await().desc
+    }
+
+    private fun makePid(spid: String) : String {
+        val uid = spid.substring(3)
+        var count = 0
+        for(char in uid.toCharArray()) {
+            if(char != '0') break
+            else count ++
+        }
+        return uid.substring(count)
     }
 }

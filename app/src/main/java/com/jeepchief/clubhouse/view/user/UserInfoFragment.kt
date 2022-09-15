@@ -54,15 +54,19 @@ class UserInfoFragment : Fragment() {
 
         binding.apply {
 
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    viewModel.getUserInfo(requireContext()).selectUserInfo()[0].also { user ->
-                        tvNickname.text = StringBuilder("Name : ").append(user.nickname).toString()
-                        tvLevel.text = StringBuilder("Lv. ").append(user.level.toString()).toString()
-                        selectMaxDivision(user.uid)
+                    MyDatabase.getInstance(requireContext()).getUserInfoDAO().selectUserInfo()[0].also { user ->
+                        withContext(Dispatchers.Main) {
+                            tvNickname.text = StringBuilder("Name : ").append(user.nickname).toString()
+                            tvLevel.text = StringBuilder("Lv. ").append(user.level.toString()).toString()
+                            selectMaxDivision(user.uid)
+                        }
                     }
                 } catch(e: IndexOutOfBoundsException) {
-                    Toast.makeText(requireContext(), "유저정보 없음", Toast.LENGTH_SHORT).show()
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "유저정보 없음", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
