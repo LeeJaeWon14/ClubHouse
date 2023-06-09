@@ -2,7 +2,7 @@ package com.jeepchief.clubhouse.model.rest
 
 object NetworkConstants {
     // Authorization key
-    const val API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJYLUFwcC1SYXRlLUxpbWl0IjoiNTAwOjEwIiwiYWNjb3VudF9pZCI6IjIwNDY5NjQ0ODQiLCJhdXRoX2lkIjoiMiIsImV4cCI6MTY4MzAyNjE3MywiaWF0IjoxNjY3NDc0MTczLCJuYmYiOjE2Njc0NzQxNzMsInNlcnZpY2VfaWQiOiI0MzAwMTE0ODEiLCJ0b2tlbl90eXBlIjoiQWNjZXNzVG9rZW4ifQ.rnqDSUR8WG8BnOuW7uJ4PKNXubKx57aYUs2dK7TFJ3g"
+    const val API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJYLUFwcC1SYXRlLUxpbWl0IjoiNTAwOjEwIiwiYWNjb3VudF9pZCI6IjIwNDY5NjQ0ODQiLCJhdXRoX2lkIjoiMiIsImV4cCI6MTcwMTg3MTI4MSwiaWF0IjoxNjg2MzE5MjgxLCJuYmYiOjE2ODYzMTkyODEsInNlcnZpY2VfaWQiOiI0MzAwMTE0ODEiLCJ0b2tlbl90eXBlIjoiQWNjZXNzVG9rZW4ifQ.fVjr5s_tuFaJyQIZWdNybzznOdLOh5VOXA6Do4abAtg"
 
     // URL
     const val BASE_URL = "https://api.nexon.co.kr/fifaonline4/v1.0/"
